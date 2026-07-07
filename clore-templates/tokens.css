@@ -1,0 +1,84 @@
+/* CLORE v1.5 canonical tokens for 3D Film Parts.
+   Built from the confirmed 3D Film Parts design system token set (v1.2, June 2026)
+   and extended into the --clore-* namespace used by CLORE Studio templates.
+   Supersedes the v1.3 baseline reconstruction. All v1.3 names are preserved.
+   Rules carried in from the brand spec:
+   - Title colour adapts to background: ink on light, white on dark or red.
+   - Warm Gold replaces Signal Red as the eyebrow accent on dark grounds only.
+   - Campaign posts use centred layout, product posts use left-aligned layout.
+   - Never use em dashes anywhere. */
+
+:root {
+  /* Color, brand */
+  --clore-signal-red: #E8231F;
+  --clore-warm-gold: #CBB88F;   /* eyebrow accent on dark grounds only */
+
+  /* Color, ink and text */
+  --clore-ink: #111111;
+  --clore-black: #000000;
+  --clore-white: #FFFFFF;
+  --clore-grey: #8A8A8A;
+  --clore-muted: #54534F;        /* secondary copy on light */
+  --clore-faint: #8A8A86;        /* tertiary meta on light */
+  --clore-muted-dark: #9B988F;   /* secondary copy on dark */
+  --clore-faint-dark: #7D7A72;   /* tertiary meta on dark */
+
+  /* Color, grounds (one flat ground per post) */
+  --clore-paper: #F2EFE8;        /* editorial light */
+  --clore-surface: #FFFFFF;      /* studio clean, cards */
+  --clore-dark: #121211;         /* editorial dark */
+  --clore-cinematic: #0E0E0E;    /* banner and sale near-black */
+
+  /* Color, hairlines */
+  --clore-hairline-light: #D3CFC3;
+  --clore-hairline-dark: #2C2B28;
+
+  /* Type */
+  --clore-font-display: 'Archivo Black', 'Arial Black', sans-serif;
+  --clore-font-mono: 'JetBrains Mono', 'Courier New', monospace;
+
+  /* Type, tracking */
+  --clore-track-head: -0.035em;  /* headlines, tight */
+  --clore-track-eyebrow: 0.18em; /* eyebrow */
+  --clore-track-label: 0.12em;   /* CTA and labels, uppercase */
+  --clore-track-spec: 0.07em;    /* spec and descriptor */
+  --clore-track-meta: 0.05em;    /* handle and meta */
+
+  /* Type, line height */
+  --clore-lh-head: 0.92;         /* headline range 0.86 to 0.95 */
+  --clore-lh-head-tight: 0.86;   /* statement scale */
+
+  /* Spacing, safe margins (1080 canvas reference) */
+  --clore-safe-social: 88px;
+  --clore-safe-social-sm: 48px;
+  --clore-clear-top: 250px;      /* story, keep clear of platform UI */
+  --clore-clear-bottom: 220px;
+
+  /* Radii */
+  --clore-radius-chip: 6px;
+  --clore-radius-code: 8px;
+  --clore-radius-card: 16px;
+  --clore-radius-card-lg: 24px;
+  --clore-radius-pill: 999px;
+
+  /* Elevation */
+  --clore-card-shadow: 0 22px 48px rgba(20, 20, 20, 0.30);
+
+  /* Motifs */
+  --clore-ebar-w: 46px;          /* eyebrow accent rule */
+  --clore-ebar-h: 3px;
+  --clore-clapper-w: 4px;        /* vertical Signal Red seam */
+
+  /* Clapper Stripe motif: alternating ink/white diagonal bands */
+  --clore-stripe: repeating-linear-gradient(
+    -45deg,
+    var(--clore-ink) 0px,
+    var(--clore-ink) 26px,
+    var(--clore-white) 26px,
+    var(--clore-white) 52px
+  );
+
+  /* Frame */
+  --clore-frame-width: 4px;
+  --clore-frame-width-story: 6px;
+}
