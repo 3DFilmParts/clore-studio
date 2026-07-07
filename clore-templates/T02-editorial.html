@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- T02 Editorial: product post on the paper ground.
+     Layout follows the approved editorial references: centred logo, red eyebrow,
+     rounded photo card with a circle badge, left-aligned ink headline, CTA footer.
+     LOGO: pass the INK logo variant (light ground). No CSS filters.
+     BADGE fills the red circle badge on the photo card; empty badge hides it.
+     PRICE may be empty; it hides cleanly. -->
+<link rel="stylesheet" href="../node_modules/@fontsource/archivo-black/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--clore-paper); }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--clore-paper);
+    overflow: hidden;
+    padding: 56px 64px 52px;
+  }
+
+  /* Format dimensions */
+  .format-square .card { width: 1080px; height: 1080px; }
+  .format-portrait .card { width: 1080px; height: 1350px; }
+  .format-story .card { width: 1080px; height: 1920px; padding: 96px 72px 88px; }
+  .format-webbanner .card { width: 1600px; height: 600px; flex-direction: row; padding: 0; }
+  .format-emailbanner .card { width: 1200px; height: 400px; flex-direction: row; padding: 0; }
+
+  .top {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  .logo { height: 52px; width: auto; }
+  .format-story .logo { height: 64px; }
+
+  .eyebrow {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: var(--clore-track-eyebrow);
+    text-transform: uppercase;
+    color: var(--clore-signal-red);
+  }
+  .format-story .eyebrow { font-size: 28px; }
+
+  .photo-card {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    border-radius: var(--clore-radius-card-lg);
+    overflow: hidden;
+    background: var(--clore-surface);
+    box-shadow: var(--clore-card-shadow);
+  }
+  .photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .circle-badge {
+    position: absolute;
+    top: 36px;
+    right: 36px;
+    width: 148px;
+    height: 148px;
+    border-radius: var(--clore-radius-pill);
+    background: var(--clore-signal-red);
+    color: var(--clore-white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1.35;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 18px;
+  }
+  .circle-badge:empty { display: none; }
+
+  .panel { flex: 0 0 auto; margin-top: 44px; }
+
+  h1 {
+    font-family: var(--clore-font-display);
+    font-size: 66px;
+    line-height: var(--clore-lh-head);
+    letter-spacing: var(--clore-track-head);
+    text-transform: uppercase;
+    color: var(--clore-ink);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .format-story h1 { font-size: 84px; -webkit-line-clamp: 3; }
+  .format-portrait h1 { -webkit-line-clamp: 3; }
+
+  .meta { display: flex; align-items: center; gap: 28px; margin-top: 24px; }
+  .price {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 38px;
+    color: var(--clore-ink);
+  }
+  .price:empty { display: none; }
+  .format-story .price { font-size: 46px; }
+
+  .footer {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 2px solid var(--clore-hairline-light);
+    margin-top: 32px;
+    padding-top: 26px;
+  }
+  .cta {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: var(--clore-track-label);
+    text-transform: uppercase;
+    color: var(--clore-ink);
+  }
+  .format-story .cta { font-size: 30px; }
+  .arrow { color: var(--clore-signal-red); }
+  .handle {
+    font-family: var(--clore-font-mono);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: var(--clore-track-meta);
+    color: var(--clore-faint);
+  }
+
+  /* Banner variants: photo card left, text column right */
+  .format-webbanner .top, .format-emailbanner .top {
+    display: none;
+  }
+  .format-webbanner .photo-card, .format-emailbanner .photo-card {
+    flex: 0 0 44%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .format-webbanner .panel, .format-emailbanner .panel {
+    flex: 1 1 auto;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 48px 64px;
+    min-width: 0;
+  }
+  .format-webbanner .circle-badge { width: 124px; height: 124px; font-size: 17px; top: 28px; right: 28px; }
+  .format-emailbanner .circle-badge { width: 96px; height: 96px; font-size: 14px; top: 20px; right: 20px; padding: 10px; }
+  .banner-head { display: none; }
+  .format-webbanner .banner-head, .format-emailbanner .banner-head {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 26px;
+  }
+  .banner-head .logo { height: 40px; }
+  .format-emailbanner .banner-head { margin-bottom: 16px; }
+  .format-emailbanner .banner-head .logo { height: 32px; }
+  .format-webbanner .banner-head .eyebrow { font-size: 20px; }
+  .format-emailbanner .banner-head .eyebrow { font-size: 16px; }
+  .format-webbanner h1 { font-size: 56px; -webkit-line-clamp: 2; }
+  .format-emailbanner h1 { font-size: 40px; -webkit-line-clamp: 2; }
+  .format-webbanner .price { font-size: 32px; }
+  .format-emailbanner .price { font-size: 26px; }
+  .format-webbanner .meta { margin-top: 18px; }
+  .format-emailbanner .meta { margin-top: 12px; }
+  .format-webbanner .footer { margin-top: 22px; padding-top: 18px; }
+  .format-emailbanner .footer { margin-top: 16px; padding-top: 14px; }
+  .format-webbanner .cta { font-size: 22px; }
+  .format-emailbanner .cta { font-size: 17px; }
+  .format-webbanner .handle { font-size: 18px; }
+  .format-emailbanner .handle { display: none; }
+</style>
+</head>
+<body class="format-{{FORMAT}}">
+  <div class="card">
+    <div class="top">
+      <img class="logo" src="{{LOGO}}" alt="3D Film Parts">
+      <div class="eyebrow">{{EYEBROW}}</div>
+    </div>
+    <div class="photo-card">
+      <img src="{{IMAGE}}" alt="">
+      <div class="circle-badge">{{BADGE}}</div>
+    </div>
+    <div class="panel">
+      <div class="banner-head">
+        <img class="logo" src="{{LOGO}}" alt="3D Film Parts">
+        <div class="eyebrow">{{EYEBROW}}</div>
+      </div>
+      <h1>{{TITLE}}</h1>
+      <div class="meta"><span class="price">{{PRICE}}</span></div>
+      <div class="footer">
+        <span class="cta">SHOP NOW <span class="arrow">-&gt;</span> 3DFILMPARTS.COM</span>
+        <span class="handle">@3dfilmparts</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

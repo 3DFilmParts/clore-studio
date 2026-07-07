@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- T10 Dual Split: two product angles separated by the vertical Signal Red
+     clapper seam, paper panel below with left-aligned type and CTA.
+     Built from approved reference 10 (dual split story), redesigned per format.
+     EXTRA SLOT: {{IMAGE2}} is the second angle, also a file:// URL.
+     If IMAGE2 is passed as an empty string the seam and right panel hide and
+     IMAGE fills the full width. LOGO: pass the INK logo variant.
+     BADGE fills the red pill top right; empty badge hides it. -->
+<link rel="stylesheet" href="../node_modules/@fontsource/archivo-black/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--clore-paper); }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--clore-paper);
+    overflow: hidden;
+  }
+
+  .format-square .card { width: 1080px; height: 1080px; }
+  .format-portrait .card { width: 1080px; height: 1350px; }
+  .format-story .card { width: 1080px; height: 1920px; }
+  .format-webbanner .card { width: 1600px; height: 600px; flex-direction: row; }
+  .format-emailbanner .card { width: 1200px; height: 400px; flex-direction: row; }
+
+  .split {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+  }
+  .half {
+    flex: 1 1 0;
+    min-width: 0;
+    background: var(--clore-surface);
+  }
+  .half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .seam {
+    flex: 0 0 var(--clore-clapper-w);
+    background: var(--clore-signal-red);
+  }
+  /* Second angle missing: hide seam and right half, first image spans full */
+  .card:has(.img2[src=""]) .seam,
+  .card:has(.img2[src=""]) .half-2 { display: none; }
+
+  .top {
+    position: absolute;
+    top: 48px;
+    left: 56px;
+    right: 56px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .format-story .top { top: 64px; left: 64px; right: 64px; }
+  .logo { height: 52px; width: auto; }
+  .format-story .logo { height: 64px; }
+
+  .pill {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: var(--clore-signal-red);
+    color: var(--clore-white);
+    padding: 12px 30px;
+    border-radius: var(--clore-radius-pill);
+  }
+  .pill:empty { display: none; }
+
+  .panel {
+    flex: 0 0 auto;
+    background: var(--clore-paper);
+    padding: 48px 56px 44px;
+  }
+  .format-story .panel { padding: 60px 64px 64px; }
+
+  .eyebrow {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: var(--clore-track-eyebrow);
+    text-transform: lowercase;
+    color: var(--clore-signal-red);
+    margin-bottom: 18px;
+  }
+  .format-story .eyebrow { font-size: 28px; }
+
+  h1 {
+    font-family: var(--clore-font-display);
+    font-size: 68px;
+    line-height: var(--clore-lh-head);
+    letter-spacing: var(--clore-track-head);
+    text-transform: uppercase;
+    color: var(--clore-ink);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .format-story h1 { font-size: 88px; -webkit-line-clamp: 3; }
+  .format-portrait h1 { -webkit-line-clamp: 3; }
+
+  .meta { display: flex; align-items: center; gap: 28px; margin-top: 24px; }
+  .price {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 38px;
+    color: var(--clore-ink);
+  }
+  .price:empty { display: none; }
+  .format-story .price { font-size: 46px; }
+
+  .cta-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-top: 2px solid var(--clore-hairline-light);
+    margin-top: 30px;
+    padding-top: 24px;
+  }
+  .cta {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: var(--clore-track-label);
+    text-transform: uppercase;
+    color: var(--clore-ink);
+  }
+  .format-story .cta { font-size: 30px; }
+  .arrow { color: var(--clore-signal-red); }
+  .handle {
+    font-family: var(--clore-font-mono);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: var(--clore-track-meta);
+    color: var(--clore-faint);
+  }
+
+  /* Banner variants: split left, panel right */
+  .format-webbanner .split, .format-emailbanner .split { flex: 0 0 52%; }
+  .format-webbanner .panel, .format-emailbanner .panel {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-width: 0;
+  }
+  .format-webbanner .panel { padding: 40px 56px; }
+  .format-emailbanner .panel { padding: 32px 44px; }
+  .format-webbanner .top, .format-emailbanner .top { display: none; }
+  .format-webbanner .eyebrow { font-size: 20px; margin-bottom: 12px; }
+  .format-emailbanner .eyebrow { font-size: 16px; margin-bottom: 10px; }
+  .format-webbanner h1 { font-size: 50px; }
+  .format-emailbanner h1 { font-size: 36px; }
+  .format-webbanner .meta { margin-top: 16px; }
+  .format-emailbanner .meta { margin-top: 12px; }
+  .format-webbanner .price { font-size: 30px; }
+  .format-emailbanner .price { font-size: 24px; }
+  .format-webbanner .cta-row { margin-top: 20px; padding-top: 16px; }
+  .format-emailbanner .cta-row { margin-top: 14px; padding-top: 12px; }
+  .format-webbanner .cta { font-size: 20px; }
+  .format-emailbanner .cta { font-size: 15px; }
+  .format-webbanner .handle, .format-emailbanner .handle { display: none; }
+</style>
+</head>
+<body class="format-{{FORMAT}}">
+  <div class="card">
+    <div class="split">
+      <div class="half half-1"><img class="img1" src="{{IMAGE}}" alt=""></div>
+      <div class="seam"></div>
+      <div class="half half-2"><img class="img2" src="{{IMAGE2}}" alt=""></div>
+    </div>
+    <div class="top">
+      <img class="logo" src="{{LOGO}}" alt="3D Film Parts">
+      <div class="pill">{{BADGE}}</div>
+    </div>
+    <div class="panel">
+      <div class="eyebrow">{{EYEBROW}}</div>
+      <h1>{{TITLE}}</h1>
+      <div class="meta"><span class="price">{{PRICE}}</span></div>
+      <div class="cta-row">
+        <span class="cta">SHOP NOW <span class="arrow">-&gt;</span> 3DFILMPARTS.COM</span>
+        <span class="handle">@3dfilmparts</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

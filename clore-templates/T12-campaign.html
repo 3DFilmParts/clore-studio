@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- T12 Campaign: the free-text template. Takes copy instead of a product.
+     Centred layout on the cinematic near-black ground with the red frame and
+     the clapper stripe, per the approved campaign references.
+     TITLE is the campaign headline, for example ALL OF IT.
+     EYEBROW is the kicker, for example EVERY SINGLE PRODUCT.
+     BADGE is the promo code rectangle, for example CODE EOFY15. Empty hides it.
+     PRICE is unused by this template and may be passed empty.
+     IMAGE is unused by this template. LOGO: pass the WHITE logo variant. -->
+<link rel="stylesheet" href="../node_modules/@fontsource/archivo-black/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--clore-cinematic); }
+
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--clore-cinematic);
+    border: var(--clore-frame-width) solid var(--clore-signal-red);
+    overflow: hidden;
+  }
+
+  .format-square .card { width: 1080px; height: 1080px; }
+  .format-portrait .card { width: 1080px; height: 1350px; }
+  .format-story .card { width: 1080px; height: 1920px; border-width: var(--clore-frame-width-story); }
+  .format-webbanner .card { width: 1600px; height: 600px; }
+  .format-emailbanner .card { width: 1200px; height: 400px; }
+
+  .stripe {
+    height: 34px;
+    background: var(--clore-stripe);
+    flex: 0 0 auto;
+  }
+  .format-story .stripe { height: 52px; }
+  .format-webbanner .stripe, .format-emailbanner .stripe { height: 22px; }
+
+  .middle {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 88px;
+  }
+  .format-emailbanner .middle { padding: 24px 64px; }
+
+  .logo { height: 56px; width: auto; margin-bottom: 56px; }
+  .format-story .logo { height: 68px; margin-bottom: 80px; }
+  .format-webbanner .logo { height: 44px; margin-bottom: 28px; }
+  .format-emailbanner .logo { height: 34px; margin-bottom: 18px; }
+
+  .eyebrow {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: var(--clore-track-eyebrow);
+    text-transform: uppercase;
+    color: var(--clore-signal-red);
+    margin-bottom: 26px;
+  }
+  .format-story .eyebrow { font-size: 32px; }
+  .format-webbanner .eyebrow { font-size: 20px; margin-bottom: 16px; }
+  .format-emailbanner .eyebrow { font-size: 16px; margin-bottom: 12px; }
+
+  h1 {
+    font-family: var(--clore-font-display);
+    font-size: 132px;
+    line-height: var(--clore-lh-head-tight);
+    letter-spacing: var(--clore-track-head);
+    text-transform: uppercase;
+    color: var(--clore-white);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    max-width: 100%;
+  }
+  .format-story h1 { font-size: 156px; }
+  .format-webbanner h1 { font-size: 88px; -webkit-line-clamp: 2; }
+  .format-emailbanner h1 { font-size: 60px; -webkit-line-clamp: 2; }
+
+  .code-badge {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 30px;
+    letter-spacing: var(--clore-track-label);
+    text-transform: uppercase;
+    background: var(--clore-signal-red);
+    color: var(--clore-white);
+    padding: 18px 40px;
+    border-radius: var(--clore-radius-code);
+    margin-top: 52px;
+  }
+  .code-badge:empty { display: none; }
+  .format-story .code-badge { font-size: 36px; margin-top: 72px; }
+  .format-webbanner .code-badge { font-size: 22px; padding: 12px 28px; margin-top: 28px; }
+  .format-emailbanner .code-badge { font-size: 18px; padding: 10px 22px; margin-top: 20px; }
+
+  .footer {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top: 2px solid var(--clore-hairline-dark);
+    padding: 26px 0;
+  }
+  .format-story .footer { padding: 34px 0; }
+  .format-webbanner .footer, .format-emailbanner .footer { padding: 14px 0; }
+  .url {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: var(--clore-track-label);
+    text-transform: uppercase;
+    color: var(--clore-white);
+  }
+  .format-story .url { font-size: 32px; }
+  .format-webbanner .url { font-size: 19px; }
+  .format-emailbanner .url { font-size: 16px; }
+  .url .arrow { color: var(--clore-signal-red); }
+</style>
+</head>
+<body class="format-{{FORMAT}}">
+  <div class="card">
+    <div class="stripe"></div>
+    <div class="middle">
+      <img class="logo" src="{{LOGO}}" alt="3D Film Parts">
+      <div class="eyebrow">{{EYEBROW}}</div>
+      <h1>{{TITLE}}</h1>
+      <div class="code-badge">{{BADGE}}</div>
+    </div>
+    <div class="footer">
+      <span class="url">SHOP NOW <span class="arrow">-&gt;</span> 3DFILMPARTS.COM</span>
+    </div>
+  </div>
+</body>
+</html>

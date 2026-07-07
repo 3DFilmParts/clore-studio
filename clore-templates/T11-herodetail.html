@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- T11 Hero Detail: full-bleed product hero on a light gradient ground with a
+     red-ringed circular detail inset, left-aligned type block and CTA row.
+     Built from approved reference 11 (hero detail square), redesigned per format.
+     EXTRA SLOT: {{IMAGE2}} is the detail crop shown inside the circle inset,
+     also a file:// URL. Empty IMAGE2 hides the whole inset.
+     BADGE is the caption under the detail circle, for example MOUNTING DETAIL.
+     Empty badge hides the caption. LOGO: pass the INK logo variant.
+     PRICE may be empty; it hides cleanly. -->
+<link rel="stylesheet" href="../node_modules/@fontsource/archivo-black/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/index.css">
+<link rel="stylesheet" href="../node_modules/@fontsource/jetbrains-mono/700.css">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { background: var(--clore-white); }
+
+  .card {
+    position: relative;
+    background: linear-gradient(180deg, var(--clore-white) 0%, #EDEBE5 100%);
+    overflow: hidden;
+  }
+
+  .format-square .card { width: 1080px; height: 1080px; }
+  .format-portrait .card { width: 1080px; height: 1350px; }
+  .format-story .card { width: 1080px; height: 1920px; }
+  .format-webbanner .card { width: 1600px; height: 600px; }
+  .format-emailbanner .card { width: 1200px; height: 400px; }
+
+  .hero {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg,
+      rgba(255, 255, 255, 0) 42%,
+      rgba(243, 241, 236, 0.85) 66%,
+      #EDEBE5 86%);
+  }
+
+  .top {
+    position: absolute;
+    top: 56px;
+    left: 64px;
+  }
+  .format-story .top { top: 72px; left: 72px; }
+  .logo { height: 52px; width: auto; }
+  .format-story .logo { height: 64px; }
+
+  .inset {
+    position: absolute;
+    top: 96px;
+    right: 64px;
+    width: 300px;
+    text-align: center;
+  }
+  .format-story .inset { top: 128px; right: 72px; }
+  .ring {
+    width: 300px;
+    height: 300px;
+    border-radius: var(--clore-radius-pill);
+    border: 6px solid var(--clore-signal-red);
+    background: var(--clore-surface);
+    overflow: hidden;
+    box-shadow: var(--clore-card-shadow);
+  }
+  .ring img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .caption {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: var(--clore-track-label);
+    text-transform: uppercase;
+    color: var(--clore-signal-red);
+    margin-top: 22px;
+  }
+  .caption:empty { display: none; }
+  .card:has(.img2[src=""]) .inset { display: none; }
+
+  .content {
+    position: absolute;
+    left: 64px;
+    right: 64px;
+    bottom: 52px;
+  }
+  .format-story .content { left: 72px; right: 72px; bottom: 96px; }
+
+  .eyebrow {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 24px;
+    letter-spacing: var(--clore-track-eyebrow);
+    text-transform: lowercase;
+    color: var(--clore-signal-red);
+    margin-bottom: 20px;
+  }
+  .format-story .eyebrow { font-size: 28px; }
+
+  h1 {
+    font-family: var(--clore-font-display);
+    font-size: 76px;
+    line-height: var(--clore-lh-head);
+    letter-spacing: var(--clore-track-head);
+    text-transform: uppercase;
+    color: var(--clore-ink);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .format-story h1 { font-size: 96px; }
+  .format-square h1 { font-size: 64px; -webkit-line-clamp: 2; }
+
+  .rule {
+    width: var(--clore-ebar-w);
+    height: var(--clore-ebar-h);
+    background: var(--clore-signal-red);
+    margin-top: 26px;
+  }
+
+  .meta { display: flex; align-items: center; gap: 28px; margin-top: 26px; }
+  .price {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 38px;
+    color: var(--clore-ink);
+  }
+  .price:empty { display: none; }
+  .format-story .price { font-size: 46px; }
+
+  .cta-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-top: 30px;
+  }
+  .cta {
+    font-family: var(--clore-font-mono);
+    font-weight: 700;
+    font-size: 26px;
+    letter-spacing: var(--clore-track-label);
+    text-transform: uppercase;
+    color: var(--clore-ink);
+  }
+  .format-story .cta { font-size: 30px; }
+  .arrow { color: var(--clore-signal-red); }
+  .handle {
+    font-family: var(--clore-font-mono);
+    font-weight: 400;
+    font-size: 22px;
+    letter-spacing: var(--clore-track-meta);
+    color: var(--clore-faint);
+  }
+
+  /* Banner variants: type left, photo right, inset overlapping the photo */
+  .format-webbanner .hero, .format-emailbanner .hero {
+    inset: 0 0 0 42%;
+    width: 58%;
+  }
+  .format-webbanner .scrim, .format-emailbanner .scrim {
+    background: linear-gradient(90deg,
+      var(--clore-white) 42%,
+      rgba(255, 255, 255, 0.85) 54%,
+      rgba(255, 255, 255, 0) 74%);
+  }
+  .format-webbanner .top { top: 48px; left: 64px; }
+  .format-emailbanner .top { top: 36px; left: 48px; }
+  .format-emailbanner .logo { height: 36px; }
+  .format-webbanner .inset { top: auto; bottom: 56px; right: 56px; width: 180px; }
+  .format-webbanner .ring { width: 180px; height: 180px; border-width: 5px; }
+  .format-webbanner .caption { font-size: 15px; margin-top: 14px; }
+  .format-emailbanner .inset { display: none; }
+  .format-webbanner .content { left: 64px; right: 48%; bottom: 48px; }
+  .format-emailbanner .content { left: 48px; right: 46%; bottom: 36px; }
+  .format-webbanner .eyebrow { font-size: 20px; margin-bottom: 14px; }
+  .format-emailbanner .eyebrow { font-size: 16px; margin-bottom: 10px; }
+  .format-webbanner h1 { font-size: 56px; -webkit-line-clamp: 2; }
+  .format-emailbanner h1 { font-size: 38px; -webkit-line-clamp: 2; }
+  .format-webbanner .rule { margin-top: 18px; }
+  .format-emailbanner .rule { display: none; }
+  .format-webbanner .meta { margin-top: 18px; }
+  .format-emailbanner .meta { margin-top: 12px; }
+  .format-webbanner .price { font-size: 30px; }
+  .format-emailbanner .price { font-size: 24px; }
+  .format-webbanner .cta-row { margin-top: 20px; }
+  .format-emailbanner .cta-row { margin-top: 14px; }
+  .format-webbanner .cta { font-size: 21px; }
+  .format-emailbanner .cta { font-size: 16px; }
+  .format-webbanner .handle, .format-emailbanner .handle { display: none; }
+</style>
+</head>
+<body class="format-{{FORMAT}}">
+  <div class="card">
+    <img class="hero" src="{{IMAGE}}" alt="">
+    <div class="scrim"></div>
+    <div class="top">
+      <img class="logo" src="{{LOGO}}" alt="3D Film Parts">
+    </div>
+    <div class="inset">
+      <div class="ring"><img class="img2" src="{{IMAGE2}}" alt=""></div>
+      <div class="caption">{{BADGE}}</div>
+    </div>
+    <div class="content">
+      <div class="eyebrow">{{EYEBROW}}</div>
+      <h1>{{TITLE}}</h1>
+      <div class="rule"></div>
+      <div class="meta"><span class="price">{{PRICE}}</span></div>
+      <div class="cta-row">
+        <span class="cta">SHOP NOW <span class="arrow">-&gt;</span> 3DFILMPARTS.COM</span>
+        <span class="handle">@3dfilmparts</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

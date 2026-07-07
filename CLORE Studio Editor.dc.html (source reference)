@@ -1,0 +1,2659 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/3d-film-parts-design-system-2de753bf-2a33-44a1-933f-5e6cead4f4a8/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/3d-film-parts-design-system-2de753bf-2a33-44a1-933f-5e6cead4f4a8/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/3d-film-parts-design-system-2de753bf-2a33-44a1-933f-5e6cead4f4a8/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/3d-film-parts-design-system-2de753bf-2a33-44a1-933f-5e6cead4f4a8/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/3d-film-parts-design-system-2de753bf-2a33-44a1-933f-5e6cead4f4a8/styles.css">
+  <script src="_ds/3d-film-parts-design-system-2de753bf-2a33-44a1-933f-5e6cead4f4a8/_ds_bundle.js"></script>
+  <script src="clore-templates/standalone-assets.js"></script>
+  <script src="https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js"></script>
+  <meta name="ext-resource-dependency" content="clore-templates/tokens.css">
+  <meta name="ext-resource-dependency" content="clore-templates/T02-editorial.html">
+  <meta name="ext-resource-dependency" content="clore-templates/T05A-editorial-light.html">
+  <meta name="ext-resource-dependency" content="clore-templates/T05B-editorial-dark.html">
+  <meta name="ext-resource-dependency" content="clore-templates/T10-dualsplit.html">
+  <meta name="ext-resource-dependency" content="clore-templates/T11-herodetail.html">
+  <meta name="ext-resource-dependency" content="clore-templates/T12-campaign.html">
+  <meta name="ext-resource-dependency" content="clore-templates/T13-cameratape.html">
+  <meta name="ext-resource-dependency" content="clore-templates/preview-assets/logo-ink-transparent.png">
+  <meta name="ext-resource-dependency" content="clore-templates/preview-assets/logo-white-transparent.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-a.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-b.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-c.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-d.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-e.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-f.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-g.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-h.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/frame-i.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/badge-new.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/badge-hot.png">
+  <meta name="ext-resource-dependency" content="clore-templates/reel-frames/badge-eyes.png">
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+      <rect width="100" height="100" fill="#E8231F"></rect>
+      <rect x="30" y="38" width="40" height="24" fill="#141414"></rect>
+      <rect x="30" y="30" width="40" height="8" fill="#F2EFE8"></rect>
+      <text x="50" y="55" font-family="monospace" font-size="10" font-weight="bold" fill="#FFFFFF" text-anchor="middle">3DFP</text>
+    </svg>
+  </template>
+  <style>
+    body { margin: 0; background: radial-gradient(120% 150% at 24% 24%, #F6F5F1 0%, #EDEBE5 52%, #E3E1DA 100%); }
+    a { color: #141414; }
+    a:hover { color: #E8231F; }
+    input[type=range] { accent-color: #E8231F; }
+  </style>
+</helmet>
+<div style="display: flex; height: 100vh; overflow: hidden; font-family: 'JetBrains Mono', monospace; color: #141414">
+
+  <div style="flex: 0 0 372px; overflow-y: auto; background: #FFFFFF; border-right: 2px solid #D3CFC3; padding: 28px 26px 60px; display: flex; flex-direction: column; gap: 26px">
+
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.18em; color: #E8231F; text-transform: lowercase">clore studio</div>
+      <div style="font-family: 'Archivo', 'Arial Black', sans-serif; font-weight: 900; font-size: 24px; letter-spacing: -0.035em; line-height: 0.92; text-transform: uppercase">TEMPLATE EDITOR</div>
+    </div>
+
+    <div style="display: flex; gap: 6px">
+      <button onClick="{{ onModeDesign }}" style="{{ modeDesignStyle }}">Design</button>
+      <button onClick="{{ onModeAnim }}" style="{{ modeAnimStyle }}">Animation</button>
+      <button onClick="{{ onModeBatch }}" style="{{ modeBatchStyle }}">Batch</button>
+      <button onClick="{{ onModeReel }}" style="{{ modeReelStyle }}">Reel</button>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Presets</div>
+      <div style="display: flex; gap: 6px">
+        <input placeholder="Preset name" value="{{ presetName }}" onChange="{{ onPresetName }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px; border: 2px solid #D3CFC3; color: #141414; flex: 1 1 auto; min-width: 0; box-sizing: border-box">
+        <button onClick="{{ onSavePreset }}" style="{{ queueBtnStyle }}">Save</button>
+      </div>
+      <sc-for list="{{ presetRows }}" as="p" hint-placeholder-count="2">
+        <div style="display: flex; gap: 6px; align-items: stretch">
+          <button onClick="{{ p.onApply }}" style="{{ p.applyStyle }}">{{ p.name }}</button>
+          <button onClick="{{ p.onRemove }}" title="Delete preset" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; padding: 0 10px; border: 2px solid #D3CFC3; background: #fff; color: #54534F; cursor: pointer; flex: 0 0 auto">✕</button>
+        </div>
+      </sc-for>
+      <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap">
+        <button onClick="{{ onExportPresets }}" style="{{ clearBtnStyle }}">Export file</button>
+        <label style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 2px solid #D3CFC3; background: #fff; color: #54534F; cursor: pointer">Import
+          <input type="file" accept="application/json,.json" onChange="{{ onImportPresets }}" style="display: none">
+        </label>
+      </div>
+      <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">A preset stores template, format, toggles, crops, headline scale and all animation settings. Pick a product, apply a preset, then export or queue as usual. Presets live in this browser; Export file downloads presets.json, drop it into the project at clore-templates/presets.json (or import it here) and those presets load permanently on every device.</div>
+    </div>
+
+    <sc-if value="{{ isNotReel }}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Template</div>
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <sc-for list="{{ templates }}" as="t" hint-placeholder-count="6">
+          <button onClick="{{ t.onSelect }}" style="{{ t.style }}">{{ t.name }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Format</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px">
+        <sc-for list="{{ formats }}" as="f" hint-placeholder-count="5">
+          <button onClick="{{ f.onSelect }}" style="{{ f.style }}">{{ f.short }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Product</div>
+      <input placeholder="Search products" value="{{ productQuery }}" onChange="{{ onProductQuery }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #141414; color: #141414; width: 100%; box-sizing: border-box">
+      <div style="display: flex; flex-direction: column; gap: 4px; max-height: 224px; overflow-y: auto; border: 2px solid #D3CFC3; padding: 6px; background: #fff">
+        <sc-for list="{{ productResults }}" as="p" hint-placeholder-count="6">
+          <button onClick="{{ p.onSelect }}" style="{{ p.style }}">{{ p.label }}</button>
+        </sc-for>
+      </div>
+      <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">{{ productCount }} Picking a product fills title, price, eyebrow, badge and images. Edit anything after.</div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Copy</div>
+      <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Title
+        <input value="{{ title }}" onChange="{{ onTitle }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #D3CFC3; color: #141414; width: 100%; box-sizing: border-box">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Headline scale {{ titleScaleLabel }}
+        <input type="range" min="0.5" max="1.6" step="0.05" value="{{ titleScale }}" onChange="{{ onTitleScale }}" style="width: 100%">
+      </label>
+      <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Eyebrow
+        <input value="{{ eyebrow }}" onChange="{{ onEyebrow }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #D3CFC3; color: #141414; width: 100%; box-sizing: border-box">
+      </label>
+      <div style="display: flex; gap: 8px; align-items: flex-end">
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86; flex: 1">Price
+          <input value="{{ price }}" onChange="{{ onPrice }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #D3CFC3; color: #141414; width: 100%; box-sizing: border-box">
+        </label>
+        <button onClick="{{ onTogglePrice }}" style="{{ priceToggleStyle }}">{{ priceToggleLabel }}</button>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: flex-end">
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86; flex: 1">Badge
+          <input value="{{ badge }}" onChange="{{ onBadge }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #D3CFC3; color: #141414; width: 100%; box-sizing: border-box">
+        </label>
+        <button onClick="{{ onToggleBadge }}" style="{{ badgeToggleStyle }}">{{ badgeToggleLabel }}</button>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Logo colour</div>
+      <div style="display: flex; gap: 6px">
+        <sc-for list="{{ logoColorOpts }}" as="o" hint-placeholder-count="3">
+          <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ isTapeTpl }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Tape ground</div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <sc-for list="{{ tapeBgOpts }}" as="o" hint-placeholder-count="5">
+            <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">All five Camera Tape grounds work in Design and Animation. Dark and red grounds switch to the white logo automatically.</div>
+      </div>
+    </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isDesign }}" hint-placeholder-val="{{ true }}">
+    <sc-if value="{{ hasImage1 }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Hero image</div>
+          <div style="display: flex; gap: 6px">
+            <button onClick="{{ onPrev1 }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; width: 30px; height: 30px; border: 2px solid #141414; background: #fff; color: #141414; cursor: pointer">&lt;</button>
+            <button onClick="{{ onNext1 }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 13px; width: 30px; height: 30px; border: 2px solid #141414; background: #fff; color: #141414; cursor: pointer">&gt;</button>
+          </div>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ thumbs1 }}" as="th" hint-placeholder-count="8">
+            <div onClick="{{ th.onPick }}" style="{{ th.style }}"></div>
+          </sc-for>
+        </div>
+        <div onDrop="{{ onDrop1 }}" onDragOver="{{ onDragOver }}" style="border: 2px dashed #D3CFC3; padding: 14px; text-align: center; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86; display: flex; flex-direction: column; gap: 8px; align-items: center">
+          <span>Drop your own image here</span>
+          <input type="file" accept="image/*" onChange="{{ onFile1 }}" style="font-size: 10px; max-width: 100%">
+          <sc-if value="{{ hasCustom1 }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onClearCustom1 }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 10px; letter-spacing: 0.1em; padding: 6px 12px; border: 2px solid #E8231F; background: #fff; color: #E8231F; cursor: pointer; text-transform: uppercase">Remove custom image</button>
+          </sc-if>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Image scale {{ scale1Label }}
+          <input type="range" min="0.5" max="3" step="0.05" value="{{ scale1 }}" onChange="{{ onScale1 }}" style="width: 100%">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Horizontal position {{ posX1Label }}
+          <input type="range" min="0" max="100" step="1" value="{{ posX1 }}" onChange="{{ onPosX1 }}" style="width: 100%">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Vertical position {{ posY1Label }}
+          <input type="range" min="0" max="100" step="1" value="{{ posY1 }}" onChange="{{ onPosY1 }}" style="width: 100%">
+        </label>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ hasImage2 }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">{{ image2Label }}</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ thumbs2 }}" as="th" hint-placeholder-count="8">
+            <div onClick="{{ th.onPick }}" style="{{ th.style }}"></div>
+          </sc-for>
+        </div>
+        <div onDrop="{{ onDrop2 }}" onDragOver="{{ onDragOver }}" style="border: 2px dashed #D3CFC3; padding: 14px; text-align: center; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86; display: flex; flex-direction: column; gap: 8px; align-items: center">
+          <span>Drop your own image here</span>
+          <input type="file" accept="image/*" onChange="{{ onFile2 }}" style="font-size: 10px; max-width: 100%">
+          <sc-if value="{{ hasCustom2 }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ onClearCustom2 }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 10px; letter-spacing: 0.1em; padding: 6px 12px; border: 2px solid #E8231F; background: #fff; color: #E8231F; cursor: pointer; text-transform: uppercase">Remove custom image</button>
+          </sc-if>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Image scale {{ scale2Label }}
+          <input type="range" min="0.5" max="3" step="0.05" value="{{ scale2 }}" onChange="{{ onScale2 }}" style="width: 100%">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Horizontal position {{ posX2Label }}
+          <input type="range" min="0" max="100" step="1" value="{{ posX2 }}" onChange="{{ onPosX2 }}" style="width: 100%">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Vertical position {{ posY2Label }}
+          <input type="range" min="0" max="100" step="1" value="{{ posY2 }}" onChange="{{ onPosY2 }}" style="width: 100%">
+        </label>
+      </div>
+    </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isAnim }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Layers</div>
+        <sc-if value="{{ noLayers }}" hint-placeholder-val="{{ false }}">
+          <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">Layer list appears once the stage has built.</div>
+        </sc-if>
+        <sc-for list="{{ layerRows }}" as="l" hint-placeholder-count="4">
+          <div style="display: flex; flex-direction: column; gap: 6px; border-bottom: 1px solid #EDEBE5; padding-bottom: 8px">
+            <div style="display: flex; gap: 8px; align-items: center; justify-content: space-between">
+              <span style="font-size: 11px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: #141414">{{ l.name }}</span>
+              <button onClick="{{ l.onToggle }}" style="{{ l.toggleStyle }}">{{ l.toggleLabel }}</button>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center">
+              <select value="{{ l.effect }}" onChange="{{ l.onEffect }}" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 5px; border: 2px solid #D3CFC3; background: #fff; color: #141414; flex: 0 0 auto">
+                <option value="global">Global effect</option>
+                <option value="fade">Fade</option>
+                <option value="rise">Rise</option>
+                <option value="slide">Slide</option>
+                <option value="scale">Scale</option>
+                <option value="none">None</option>
+              </select>
+              <input type="range" min="0" max="2" step="0.05" value="{{ l.delay }}" onChange="{{ l.onDelay }}" style="flex: 1 1 auto; min-width: 40px">
+              <span style="font-size: 10px; color: #8A8A86; flex: 0 0 auto">{{ l.delayLabel }}</span>
+            </div>
+          </div>
+        </sc-for>
+        <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">Each layer can be hidden, given its own entrance effect, and an extra delay on top of the global stagger.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Text animation</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ textEffectOpts }}" as="o" hint-placeholder-count="4">
+            <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Easing</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ easingOpts }}" as="o" hint-placeholder-count="4">
+            <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Duration {{ textDurLabel }}
+          <input type="range" min="0.2" max="2.5" step="0.05" value="{{ textDur }}" onChange="{{ onTextDur }}" style="width: 100%">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Stagger {{ textStaggerLabel }}
+          <input type="range" min="0" max="1" step="0.02" value="{{ textStagger }}" onChange="{{ onTextStagger }}" style="width: 100%">
+        </label>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Start delay {{ textDelayLabel }}
+          <input type="range" min="0" max="2" step="0.05" value="{{ textDelay }}" onChange="{{ onTextDelay }}" style="width: 100%">
+        </label>
+      </div>
+
+      <sc-if value="{{ animHasImages }}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Image animation</div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Images in cycle {{ imageCountLabel }}
+            <input type="range" min="1" max="5" step="1" value="{{ imageCount }}" onChange="{{ onImageCount }}" style="width: 100%">
+          </label>
+          <div style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Entrance</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ imageEntranceOpts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Hold per image {{ holdLabel }}
+            <input type="range" min="0.5" max="5" step="0.1" value="{{ hold }}" onChange="{{ onHold }}" style="width: 100%">
+          </label>
+          <div style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Transition</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ transitionOpts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Transition time {{ transDurLabel }}
+            <input type="range" min="0.15" max="1.5" step="0.05" value="{{ transDur }}" onChange="{{ onTransDur }}" style="width: 100%">
+          </label>
+          <div style="display: flex; gap: 8px; align-items: center">
+            <button onClick="{{ onToggleKb }}" style="{{ kbStyle }}">{{ kbLabel }}</button>
+            <span style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Ken Burns drift</span>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Ken Burns zoom {{ kbAmountLabel }}
+            <input type="range" min="0.02" max="0.4" step="0.01" value="{{ kbAmount }}" onChange="{{ onKbAmount }}" style="width: 100%">
+          </label>
+        </div>
+      </sc-if>
+
+      <div style="display: flex; gap: 8px; flex-wrap: wrap">
+        <button onClick="{{ onToggleLoop }}" style="{{ loopStyle }}">{{ loopLabel }}</button>
+        <button onClick="{{ onRebuild }}" style="{{ clearBtnStyle }}">Rebuild layers</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isReel }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Reel video</div>
+        <div onDrop="{{ onVideoDrop }}" onDragOver="{{ onDragOver }}" style="border: 2px dashed #D3CFC3; padding: 14px; text-align: center; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86; display: flex; flex-direction: column; gap: 8px; align-items: center">
+          <span>Drop your edited vertical video here</span>
+          <input type="file" accept="video/*" onChange="{{ onVideoFile }}" style="font-size: 10px; max-width: 100%">
+          <sc-if value="{{ videoName }}" hint-placeholder-val="{{ false }}">
+            <span style="color: #E8231F; font-weight: 700; text-transform: none">{{ videoName }} · {{ videoDurLabel }}</span>
+          </sc-if>
+        </div>
+        <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">HD vertical, up to 30 fps. The video stays in this browser session — re-select it after a reload; skins and overlays are remembered.</div>
+        <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Video zoom {{ reelZoomLabel }}
+          <input type="range" min="0.4" max="2.5" step="0.05" value="{{ reelZoom }}" onChange="{{ onReelZoom }}" style="width: 100%">
+        </label>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Skin</div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <sc-for list="{{ skinRows }}" as="sk" hint-placeholder-count="6">
+            <button onClick="{{ sk.onPick }}" style="{{ sk.style }}">{{ sk.name }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ tcodeSel }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; gap: 6px">
+            <sc-for list="{{ tcPosOpts }}" as="o" hint-placeholder-count="2">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Timecode size {{ tcScaleLabel }}
+            <input type="range" min="0.5" max="1.5" step="0.05" value="{{ tcScale }}" onChange="{{ onTcScale }}" style="width: 100%">
+          </label>
+          <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">Rolling timecode reads the video playhead at the source frame rate, like a digital movie slate.</div>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Elements</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ elementRows }}" as="er" hint-placeholder-count="3">
+            <button onClick="{{ er.onPick }}" style="{{ er.style }}">{{ er.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display: flex; gap: 6px">
+          <sc-for list="{{ reelLogoColorOpts }}" as="o" hint-placeholder-count="3">
+            <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">Logo, footer line and skin accents can each be switched off per reel. Logo colour: Auto picks black on light grounds, white on dark.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Animated badge</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ badgeOpts }}" as="o" hint-placeholder-count="4">
+            <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ badgeOn }}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ badgePosOpts }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </sc-if>
+        <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">Sticker pops in, then gently bobs and wiggles over the video. Baked into the export.</div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">CTA end card</div>
+          <button onClick="{{ onCtaToggle }}" style="{{ ctaToggleStyle }}">{{ ctaToggleLabel }}</button>
+        </div>
+        <sc-if value="{{ ctaOn }}" hint-placeholder-val="{{ false }}">
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Duration {{ ctaDurLabel }}
+            <input type="range" min="2" max="5" step="0.5" value="{{ ctaDur }}" onChange="{{ onCtaDur }}" style="width: 100%">
+          </label>
+          <div style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Background</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ ctaBgOpts }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Headline
+            <input value="{{ ctaHeadline }}" onChange="{{ onCtaHeadline }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #D3CFC3; color: #141414; width: 100%; box-sizing: border-box">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Sub line
+            <input value="{{ ctaSub }}" onChange="{{ onCtaSub }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 10px; border: 2px solid #D3CFC3; color: #141414; width: 100%; box-sizing: border-box">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Headline size {{ ctaSizeLabel }}
+            <input type="range" min="48" max="150" step="2" value="{{ ctaSize }}" onChange="{{ onCtaSize }}" style="width: 100%">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Text position {{ ctaTextYLabel }}
+            <input type="range" min="8" max="90" step="1" value="{{ ctaTextY }}" onChange="{{ onCtaTextY }}" style="width: 100%">
+          </label>
+          <div style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Image</div>
+          <div onDrop="{{ onCtaImgDrop }}" onDragOver="{{ onDragOver }}" style="border: 2px dashed #D3CFC3; padding: 14px; text-align: center; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86; display: flex; flex-direction: column; gap: 8px; align-items: center">
+            <span>Drop a product image here</span>
+            <input type="file" accept="image/*" onChange="{{ onCtaImgFile }}" style="font-size: 10px; max-width: 100%">
+            <sc-if value="{{ ctaHasImg }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ onCtaImgClear }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 10px; letter-spacing: 0.1em; padding: 6px 12px; border: 2px solid #E8231F; background: #fff; color: #E8231F; cursor: pointer; text-transform: uppercase">Remove image</button>
+            </sc-if>
+          </div>
+          <div style="font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Image frame</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 6px">
+            <sc-for list="{{ ctaFrameOpts }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.onPick }}" style="{{ o.style }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Corner radius {{ ctaRadiusLabel }}
+            <input type="range" min="0" max="60" step="2" value="{{ ctaRadius }}" onChange="{{ onCtaRadius }}" style="width: 100%">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Image size {{ ctaImgSizeLabel }}
+            <input type="range" min="30" max="90" step="1" value="{{ ctaImgSize }}" onChange="{{ onCtaImgSize }}" style="width: 100%">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Image position {{ ctaImgYLabel }}
+            <input type="range" min="20" max="90" step="1" value="{{ ctaImgY }}" onChange="{{ onCtaImgY }}" style="width: 100%">
+          </label>
+        </sc-if>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; justify-content: space-between">
+          <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #54534F">Text overlays</div>
+          <button onClick="{{ onAddOverlay }}" style="{{ queueBtnStyle }}">Add text</button>
+        </div>
+        <div style="font-size: 10px; color: #8A8A86; line-height: 1.5">Add text appears at the current playhead. Each overlay animates in, holds, then fades out.</div>
+        <sc-for list="{{ overlayRows }}" as="o" hint-placeholder-count="1">
+          <div style="border: 2px solid #D3CFC3; padding: 10px; display: flex; flex-direction: column; gap: 8px">
+            <div style="display: flex; gap: 6px">
+              <input value="{{ o.text }}" onChange="{{ o.onText }}" style="font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 9px; border: 2px solid #D3CFC3; color: #141414; flex: 1 1 auto; min-width: 0; box-sizing: border-box">
+              <button onClick="{{ o.onRemove }}" title="Remove overlay" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; padding: 0 10px; border: 2px solid #D3CFC3; background: #fff; color: #54534F; cursor: pointer; flex: 0 0 auto">✕</button>
+            </div>
+            <div style="display: flex; gap: 6px">
+              <select value="{{ o.kind }}" onChange="{{ o.onKind }}" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 6px; border: 2px solid #D3CFC3; background: #fff; color: #141414; flex: 1 1 50%">
+                <option value="headline-white">Headline, white</option>
+                <option value="headline-ink">Headline, ink</option>
+                <option value="eyebrow">Eyebrow, red mono</option>
+                <option value="badge">Badge, red block</option>
+              </select>
+              <select value="{{ o.effect }}" onChange="{{ o.onEffect }}" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 6px; border: 2px solid #D3CFC3; background: #fff; color: #141414; flex: 1 1 50%">
+                <option value="rise">Rise in</option>
+                <option value="fade">Fade in</option>
+                <option value="slide">Slide in</option>
+                <option value="scale">Scale in</option>
+                <option value="none">Hard cut</option>
+              </select>
+            </div>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Start {{ o.startLabel }}
+              <input type="range" min="0" max="{{ o.startMax }}" step="0.1" value="{{ o.start }}" onChange="{{ o.onStart }}" style="width: 100%">
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Duration {{ o.durLabel }}
+              <input type="range" min="0.5" max="12" step="0.1" value="{{ o.dur }}" onChange="{{ o.onDur }}" style="width: 100%">
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Size {{ o.sizeLabel }}
+              <input type="range" min="36" max="170" step="2" value="{{ o.size }}" onChange="{{ o.onSize }}" style="width: 100%">
+            </label>
+            <label style="display: flex; flex-direction: column; gap: 4px; font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: #8A8A86">Vertical position {{ o.yLabel }}
+              <input type="range" min="5" max="95" step="1" value="{{ o.y }}" onChange="{{ o.onY }}" style="width: 100%">
+            </label>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ isNotReel }}" hint-placeholder-val="{{ true }}">
+    <button onClick="{{ onReset }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; padding: 12px; border: 2px solid #141414; background: #fff; color: #141414; cursor: pointer">Reset this template</button>
+    </sc-if>
+  </div>
+
+  <div style="flex: 1 1 auto; overflow: auto; display: flex; flex-direction: column; align-items: center; gap: 22px; padding: 36px 40px 60px">
+    <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+      <div style="padding: 18px 24px; background: #E8231F; color: #fff; font-size: 13px; max-width: 720px">{{ error }}</div>
+    </sc-if>
+    <div style="display: flex; align-items: baseline; gap: 16px; align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%">
+      <div style="font-family: 'Archivo', 'Arial Black', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: -0.03em; text-transform: uppercase">{{ mainTitle }}</div>
+      <div style="font-size: 11px; letter-spacing: 0.07em; color: #54534F">{{ mainLabel }}</div>
+      <div style="font-size: 11px; letter-spacing: 0.07em; color: #8A8A86">{{ logoNote }}</div>
+    </div>
+    <sc-if value="{{ isDesign }}" hint-placeholder-val="{{ true }}">
+    <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%">
+      <button onClick="{{ onExportPng }}" style="{{ exportBtnStyle }}">PNG</button>
+      <button onClick="{{ onExportJpeg }}" style="{{ exportBtnStyle }}">JPEG</button>
+      <button onClick="{{ onExportSvg }}" style="{{ exportBtnStyle }}">SVG</button>
+      <button onClick="{{ onToggleHq }}" style="{{ hqStyle }}">{{ hqLabel }}</button>
+      <div style="width: 2px; height: 22px; background: #D3CFC3"></div>
+      <button onClick="{{ onQueueAdd }}" style="{{ queueBtnStyle }}">Save to queue</button>
+      <sc-if value="{{ exporting }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size: 11px; letter-spacing: 0.07em; color: #E8231F; font-weight: 700">{{ exporting }}</span>
+      </sc-if>
+    </div>
+    <sc-if value="{{ hasQueue }}" hint-placeholder-val="{{ false }}">
+      <div style="align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%; background: #fff; border: 2px solid #D3CFC3; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap">
+          <div style="font-weight: 700; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #141414">Queue · {{ queueCount }}</div>
+          <button onClick="{{ onExportAllPng }}" style="{{ exportBtnStyle }}">Export all PNG</button>
+          <button onClick="{{ onExportAllJpeg }}" style="{{ exportBtnStyle }}">Export all JPEG</button>
+          <button onClick="{{ onExportAllSvg }}" style="{{ exportBtnStyle }}">Export all SVG</button>
+          <button onClick="{{ onQueueClear }}" style="{{ clearBtnStyle }}">Clear</button>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px">
+          <sc-for list="{{ queueItems }}" as="q" hint-placeholder-count="3">
+            <button onClick="{{ q.onRemove }}" title="Remove from queue" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.05em; padding: 6px 10px; border: 2px solid #141414; background: #fff; color: #141414; cursor: pointer">{{ q.label }} ✕</button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ main }}" hint-placeholder-val="{{ false }}">
+      <div style="{{ main.wrapStyle }}">
+        <iframe srcdoc="{{ main.srcdoc }}" style="{{ main.frameStyle }}" title="preview"></iframe>
+      </div>
+      <div style="display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; justify-content: center">
+        <sc-for list="{{ minis }}" as="m" hint-placeholder-count="5">
+          <div onClick="{{ m.onSelect }}" style="display: flex; flex-direction: column; gap: 5px; cursor: pointer; align-items: center">
+            <div style="{{ m.wrapStyle }}">
+              <iframe srcdoc="{{ m.srcdoc }}" style="{{ m.frameStyle }}" title="{{ m.label }}"></iframe>
+            </div>
+            <div style="{{ m.labelStyle }}">{{ m.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+    </sc-if>
+
+    <sc-if value="{{ isAnim }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ animStatus }}" hint-placeholder-val="{{ false }}">
+        <div style="align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%; font-size: 12px; font-weight: 700; letter-spacing: 0.07em; color: #E8231F">{{ animStatus }}</div>
+      </sc-if>
+      <div style="{{ stageWrapStyle }}">
+        <canvas ref="{{ canvasRef }}" style="{{ canvasStyle }}"></canvas>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; align-self: stretch; max-width: 1240px; width: 100%; margin: 0 auto">
+        <button onClick="{{ onPlayPause }}" style="{{ exportBtnStyle }}">{{ playLabel }}</button>
+        <button onClick="{{ onRestart }}" style="{{ exportBtnStyle }}">Restart</button>
+        <input type="range" min="0" max="{{ animTotalMs }}" step="16" value="{{ animT }}" onChange="{{ onScrub }}" style="flex: 1 1 200px">
+        <span style="font-size: 11px; letter-spacing: 0.05em; color: #54534F">{{ animTimeLabel }}</span>
+        <button onClick="{{ onExportVideo }}" style="{{ queueBtnStyle }}">Export MP4</button>
+        <sc-if value="{{ isExporting }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onStopExport }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 2px solid #E8231F; background: #E8231F; color: #fff; cursor: pointer">Stop</button>
+        </sc-if>
+      </div>
+      <div style="font-size: 10px; color: #8A8A86; line-height: 1.6; align-self: stretch; max-width: 1240px; width: 100%; margin: 0 auto">{{ videoNote }}</div>
+    </sc-if>
+
+    <sc-if value="{{ isReel }}" hint-placeholder-val="{{ false }}">
+      <sc-if value="{{ reelStatus }}" hint-placeholder-val="{{ false }}">
+        <div style="align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%; font-size: 12px; font-weight: 700; letter-spacing: 0.07em; color: #E8231F">{{ reelStatus }}</div>
+      </sc-if>
+      <div style="{{ reelWrapStyle }}">
+        <canvas ref="{{ reelCanvasRef }}" style="{{ reelCanvasStyle }}"></canvas>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; align-self: stretch; max-width: 1240px; width: 100%; margin: 0 auto">
+        <button onClick="{{ onReelPlay }}" style="{{ exportBtnStyle }}">{{ reelPlayLabel }}</button>
+        <input type="range" min="0" max="{{ reelDurMs }}" step="33" value="{{ reelT }}" onChange="{{ onReelScrub }}" style="flex: 1 1 200px">
+        <span style="font-size: 11px; letter-spacing: 0.05em; color: #54534F">{{ reelTimeLabel }}</span>
+        <button onClick="{{ onExportReel }}" style="{{ queueBtnStyle }}">Export MP4</button>
+      </div>
+      <div style="font-size: 10px; color: #8A8A86; line-height: 1.6; align-self: stretch; max-width: 1240px; width: 100%; margin: 0 auto">{{ reelNote }}</div>
+    </sc-if>
+
+    <sc-if value="{{ isBatch }}" hint-placeholder-val="{{ false }}">
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap; align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%">
+        <button onClick="{{ onShuffleBatch }}" style="{{ queueBtnStyle }}">Shuffle 10 products</button>
+        <button onClick="{{ onExportBatchPng }}" style="{{ exportBtnStyle }}">Export all PNG</button>
+        <button onClick="{{ onExportBatchJpeg }}" style="{{ exportBtnStyle }}">Export all JPEG</button>
+        <button onClick="{{ onExportBatchVideos }}" style="{{ exportBtnStyle }}">Export all MP4</button>
+        <sc-if value="{{ isExporting }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ onStopExport }}" style="font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; padding: 9px 14px; border: 2px solid #E8231F; background: #E8231F; color: #fff; cursor: pointer">Stop</button>
+        </sc-if>
+        <sc-if value="{{ exporting }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size: 11px; letter-spacing: 0.07em; color: #E8231F; font-weight: 700">{{ exporting }}</span>
+        </sc-if>
+      </div>
+      <div style="font-size: 10px; color: #8A8A86; line-height: 1.6; align-self: stretch; max-width: 1240px; width: 100%; margin: 0 auto">Ten random products styled with the current template, format and settings. Apply a preset or switch template/format in the sidebar and the whole batch restyles instantly; Shuffle deals ten new products. Export renders each at full production size. Export all MP4 uses your Animation tab setup (effects, easing, layer toggles, image cycle) and records each video in real time, one after another — keep the tab visible and allow multiple downloads.</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 18px; align-self: stretch; max-width: 1240px; margin: 0 auto; width: 100%">
+        <sc-for list="{{ batchRows }}" as="b" hint-placeholder-count="10">
+          <div style="display: flex; flex-direction: column; gap: 6px; align-items: flex-start">
+            <div style="{{ b.wrapStyle }}">
+              <iframe srcdoc="{{ b.srcdoc }}" style="{{ b.frameStyle }}" title="{{ b.label }}"></iframe>
+            </div>
+            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.05em; color: #54534F; max-width: 220px">{{ b.label }}</div>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { raw: null, tokens: '', error: null, active: 'T02-editorial.html', settings: {}, productImages: {}, catalog: null, productQuery: '', queue: [], exporting: '', hq: true,
+    mode: 'design',
+    anim: { textEffect: 'rise', easing: 'smooth', textDuration: 0.8, textStagger: 0.18, textDelay: 0.2, imageCount: 3, imageEntrance: 'scale', hold: 1.8, transition: 'fade', transDuration: 0.6, kenburns: true, kbAmount: 0.12, loop: true },
+    animPlaying: false, animT: 0, animLayers: null, animStatus: '', presets: [], presetName: '',
+    reel: { skin: 'signal', zoom: 1, tcPos: 'top', tcScale: 1, badge: { id: 'none', pos: 'right' }, elements: { logo: true, footer: true, accent: true, progress: true }, overlays: [],
+      cta: { on: false, dur: 3, bg: 'red', headline: 'GET YOURS AT', sub: '3DFILMPARTS.COM', size: 104, textY: 28, image: null, frame: 'white', radius: 28, imgSize: 58, imgY: 62 } },
+    reelPlaying: false, reelT: 0, reelDur: 0, reelStatus: '', videoName: '' };
+
+  savePreset() {
+    const s = this.cur();
+    const name = (this.state.presetName || '').trim() || 'Preset ' + (this.state.presets.length + 1);
+    const p = {
+      id: Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+      name,
+      file: this.state.active,
+      format: s.format,
+      design: {
+        priceOn: s.priceOn, badgeOn: s.badgeOn, titleScale: s.titleScale ?? 1,
+        scale1: s.scale1, scale2: s.scale2,
+        posX1: s.posX1, posY1: s.posY1, posX2: s.posX2, posY2: s.posY2
+      },
+      anim: JSON.parse(JSON.stringify(this.state.anim))
+    };
+    this.setState({ presets: this.state.presets.concat([p]), presetName: '' }, () => this.persist());
+  }
+
+  mergePresets(incoming) {
+    if (!Array.isArray(incoming)) return;
+    const have = {};
+    this.state.presets.forEach(p => { have[p.id] = 1; });
+    const add = incoming.filter(p => p && p.id && p.file && !have[p.id]);
+    if (add.length) this.setState({ presets: this.state.presets.concat(add) }, () => this.persist());
+  }
+
+  async loadPresetFile() {
+    try {
+      const r = await fetch('clore-templates/presets.json');
+      if (r.ok) this.mergePresets(await r.json());
+    } catch (e) { /* no preset file */ }
+  }
+
+  exportPresets() {
+    const blob = new Blob([JSON.stringify(this.state.presets, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    this.download(url, 'presets.json');
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  importPresets(e) {
+    const file = e.target && e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try { this.mergePresets(JSON.parse(reader.result)); } catch (err) { /* invalid file */ }
+    };
+    reader.readAsText(file);
+  }
+
+  applyPreset(p) {
+    this.setState({
+      active: p.file,
+      anim: Object.assign({}, this.state.anim, p.anim || {})
+    }, () => {
+      this.upd(Object.assign({ format: p.format }, p.design || {}));
+      this.loadImagesFor(this.cur().product);
+    });
+  }
+
+  canvasRef = React.createRef();
+
+  slug(t) {
+    return String(t).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'design';
+  }
+
+  download(dataUrl, name) {
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
+  async capture(file, settings, format, type) {
+    const fm = this.FORMATS.find(f => f.f === format);
+    const srcdoc = this.buildSrcdoc(file, settings, format);
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;left:-100000px;top:0;width:' + fm.w + 'px;height:' + fm.h + 'px;border:0';
+    document.body.appendChild(iframe);
+    try {
+      await new Promise((res) => { iframe.onload = res; iframe.srcdoc = srcdoc; });
+      const doc = iframe.contentDocument;
+      try { await doc.fonts.ready; } catch (e) { /* ignore */ }
+      const imgs = Array.prototype.slice.call(doc.images);
+      await Promise.all(imgs.map(im => im.complete ? null : new Promise(r => { im.onload = r; im.onerror = r; })));
+      await new Promise(r => setTimeout(r, 350));
+      const card = doc.querySelector('.card');
+      const lib = window.htmlToImage;
+      if (!lib) throw new Error('export library not loaded, check network');
+      const opts = { width: fm.w, height: fm.h, pixelRatio: (type === 'png' && this.state.hq) ? 2 : 1, cacheBust: true };
+      if (type === 'png') return await lib.toPng(card, opts);
+      if (type === 'jpeg') return await lib.toJpeg(card, Object.assign({}, opts, { quality: 0.92, backgroundColor: '#ffffff' }));
+      return await lib.toSvg(card, opts);
+    } finally {
+      iframe.remove();
+    }
+  }
+
+  async exportItems(items, type) {
+    if (this.state.exporting || !items.length || !this.state.raw) return;
+    const ext = type === 'jpeg' ? 'jpg' : type;
+    for (let i = 0; i < items.length; i++) {
+      this.setState({ exporting: 'Exporting ' + (i + 1) + ' of ' + items.length + '...' });
+      try {
+        const it = items[i];
+        const dataUrl = await this.capture(it.file, it.settings, it.format, type);
+        const name = this.slug(it.settings.title) + '_' + it.file.replace('.html', '') + '_' + it.format + '.' + ext;
+        this.download(dataUrl, name);
+        await new Promise(r => setTimeout(r, 600));
+      } catch (e) {
+        this.setState({ exporting: 'Export failed: ' + (e && e.message ? e.message : e) });
+        await new Promise(r => setTimeout(r, 2000));
+      }
+    }
+    this.setState({ exporting: '' });
+  }
+
+  /* ---------- Animation engine ---------- */
+
+  RECIPES = {
+    'T02-editorial.html': { imgBox: '.photo-card', hide: ['.photo-card img'], scrim: null,
+      anim: [['.top', 'Logo + eyebrow'], ['.banner-head', 'Logo + eyebrow'], ['.circle-badge', 'Badge'], ['h1', 'Headline'], ['.meta', 'Price'], ['.footer', 'CTA footer']] },
+    'T05A-editorial-light.html': { imgBox: '.card', hide: ['.hero'], scrim: '.scrim',
+      anim: [['.logo', 'Logo'], ['.circle-badge', 'Badge'], ['.eyebrow', 'Eyebrow'], ['h1', 'Headline'], ['.rule', 'Accent rule'], ['.meta', 'Price'], ['.cta-row', 'CTA row']] },
+    'T05B-editorial-dark.html': { imgBox: '.card', hide: ['.hero'], scrim: '.scrim',
+      anim: [['.logo', 'Logo'], ['.circle-badge', 'Badge'], ['.eyebrow', 'Eyebrow'], ['h1', 'Headline'], ['.rule', 'Accent rule'], ['.meta', 'Price'], ['.cta-row', 'CTA row']] },
+    'T10-dualsplit.html': { imgBox: '.half-1', imgBox2: '.half-2', hide: ['.img1', '.img2'], scrim: null,
+      anim: [['.logo', 'Logo'], ['.pill', 'Badge'], ['.eyebrow', 'Eyebrow'], ['h1', 'Headline'], ['.meta', 'Price'], ['.cta-row', 'CTA row']] },
+    'T11-herodetail.html': { imgBox: '.card', hide: ['.hero'], scrim: '.scrim',
+      anim: [['.top', 'Logo'], ['.inset', 'Detail inset'], ['.eyebrow', 'Eyebrow'], ['h1', 'Headline'], ['.rule', 'Accent rule'], ['.meta', 'Price'], ['.cta-row', 'CTA row']] },
+    'T12-campaign.html': { imgBox: null, hide: [], scrim: null,
+      anim: [['.middle .logo', 'Logo'], ['.middle .eyebrow', 'Kicker'], ['.middle h1', 'Headline'], ['.code-badge', 'Code badge'], ['.footer', 'Footer']] },
+    'T13-cameratape.html': { imgBox: '.photo-card', hide: ['.photo-card img'], scrim: null,
+      anim: [['.top', 'Logo + badge'], ['.photo-card .tape-tl', 'Tape label A'], ['.photo-card .tape-br', 'Tape label B'], ['.eyebrow', 'Eyebrow'], ['h1', 'Headline'], ['.rule', 'Accent rule'], ['.meta', 'Price'], ['.cta-row', 'CTA row']] }
+  };
+
+  layerKey(sel) { return this.state.active + '|' + sel; }
+
+  layerCfg(sel) { return (this.state.anim.layerCfg || {})[this.layerKey(sel)] || {}; }
+
+  setLayerCfg(sel, patch) {
+    const all = Object.assign({}, this.state.anim.layerCfg || {});
+    all[this.layerKey(sel)] = Object.assign({}, all[this.layerKey(sel)] || {}, patch);
+    this.setAnim({ layerCfg: all });
+  }
+
+  EASINGS = {
+    linear: t => t,
+    smooth: t => 1 - Math.pow(1 - t, 3),
+    snappy: t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+    overshoot: t => { const c = 1.70158; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); }
+  };
+
+  loadImg(url) {
+    return new Promise((res) => {
+      const im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = () => res(im);
+      im.onerror = () => res(null);
+      im.src = url;
+    });
+  }
+
+  cyclePool(s) {
+    const seen = {};
+    const pool = [];
+    const push = (u) => { if (u && !seen[u]) { seen[u] = 1; pool.push(u); } };
+    push(s.custom1);
+    (this.state.productImages[s.product.handle] || s.product.images || []).forEach(push);
+    push(s.custom2);
+    return pool.slice(0, Math.max(1, this.state.anim.imageCount));
+  }
+
+  animKey() {
+    const s = this.cur();
+    return JSON.stringify([this.state.active, s.format, s.title, s.eyebrow, s.price, s.badge,
+      s.priceOn, s.badgeOn, s.img1, s.img2, !!s.custom1, !!s.custom2,
+      s.scale1, s.scale2, s.posX1, s.posY1, s.posX2, s.posY2,
+      this.state.anim.imageCount, this.state.raw ? 1 : 0]);
+  }
+
+  async ensureLayers() {
+    if (!this.state.raw || this.state.mode !== 'anim') return;
+    const key = this.animKey();
+    if (this._builtKey === key && this.state.animLayers) return;
+    this._wantKey = key;
+    if (this._building) return;
+    this._building = true;
+    try {
+      while (this._wantKey !== this._builtKey) {
+        const k = this._wantKey;
+        await this.buildLayers();
+        this._builtKey = k;
+      }
+    } finally {
+      this._building = false;
+    }
+  }
+
+  async buildLayers(sOverride) {
+    this.setState({ animStatus: 'Preparing layers, a few seconds...', animPlaying: false, animLayers: null });
+    if (this._raf) cancelAnimationFrame(this._raf);
+    const s = sOverride || this.cur();
+    const active = this.state.active;
+    const recipe = this.RECIPES[active];
+    const fm = this.FORMATS.find(f => f.f === s.format);
+    const iframe = document.createElement('iframe');
+    iframe.style.cssText = 'position:fixed;left:-100000px;top:0;width:' + fm.w + 'px;height:' + fm.h + 'px;border:0';
+    document.body.appendChild(iframe);
+    try {
+      const srcdoc = this.buildSrcdoc(active, s, s.format);
+      await new Promise((res) => { iframe.onload = res; iframe.srcdoc = srcdoc; });
+      const doc = iframe.contentDocument;
+      const clampInfo = Array.prototype.map.call(doc.querySelectorAll('h1'), h => {
+        const cs = getComputedStyle(h);
+        return { h, clamp: parseInt(cs.webkitLineClamp, 10) || 0, lh: parseFloat(cs.lineHeight) || 0 };
+      });
+      const fixer = doc.createElement('style');
+      fixer.textContent = 'h1 { display: block !important; -webkit-line-clamp: none !important; overflow: hidden !important; }';
+      doc.head.appendChild(fixer);
+      clampInfo.forEach(ci => { if (ci.clamp && ci.lh) ci.h.style.maxHeight = Math.ceil(ci.clamp * ci.lh + 2) + 'px'; });
+      try { await doc.fonts.ready; } catch (e) { /* ignore */ }
+      const imgsEls = Array.prototype.slice.call(doc.images);
+      await Promise.all(imgsEls.map(im => im.complete ? null : new Promise(r => { im.onload = r; im.onerror = r; })));
+      await new Promise(r => setTimeout(r, 300));
+      const lib = window.htmlToImage;
+      if (!lib) throw new Error('capture library not loaded');
+      const card = doc.querySelector('.card');
+      const cardR = card.getBoundingClientRect();
+      const rel = (el) => {
+        const r = el.getBoundingClientRect();
+        return { x: r.left - cardR.left, y: r.top - cardR.top, w: r.width, h: r.height };
+      };
+      const visible = (el) => el && el.getBoundingClientRect().width > 1 && el.getBoundingClientRect().height > 1 && getComputedStyle(el).display !== 'none' && getComputedStyle(el).visibility !== 'hidden';
+      const opts = { pixelRatio: 1, cacheBust: false };
+
+      const texts = [];
+      const animEls = [];
+      for (const entry of recipe.anim) {
+        const sel = entry[0], name = entry[1];
+        const el = Array.prototype.find.call(doc.querySelectorAll(sel), e => visible(e));
+        if (el && !animEls.some(a => a.el === el || a.el.contains(el) || el.contains(a.el))) {
+          animEls.push({ sel, name, el, rect: rel(el) });
+        }
+      }
+      const cardCap = async () => this.loadImg(await lib.toPng(card, Object.assign({}, opts, { width: fm.w, height: fm.h })));
+      for (const a of animEls) {
+        try {
+          card.style.visibility = 'hidden';
+          a.el.style.visibility = 'visible';
+          const im = await cardCap();
+          if (im) texts.push({ img: im, rect: a.rect, sel: a.sel, name: a.name });
+        } catch (e) { /* skip failed layer */ }
+        card.style.visibility = '';
+        a.el.style.visibility = '';
+      }
+      let scrim = null;
+      const scrimEl = recipe.scrim ? doc.querySelector(recipe.scrim) : null;
+      if (visible(scrimEl)) {
+        try {
+          card.style.visibility = 'hidden';
+          scrimEl.style.visibility = 'visible';
+          scrim = await cardCap();
+        } catch (e) { scrim = null; }
+        card.style.visibility = '';
+        scrimEl.style.visibility = '';
+      }
+      const boxOf = (sel) => {
+        const el = sel ? doc.querySelector(sel) : null;
+        if (!visible(el)) return null;
+        const r = rel(el);
+        r.r = parseFloat(getComputedStyle(el).borderRadius) || 0;
+        return r;
+      };
+      const imgRect = boxOf(recipe.imgBox);
+      const imgRect2 = boxOf(recipe.imgBox2);
+
+      recipe.hide.forEach(sel => doc.querySelectorAll(sel).forEach(el => { el.style.visibility = 'hidden'; }));
+      if (scrimEl) scrimEl.style.visibility = 'hidden';
+      animEls.forEach(a => { a.el.style.visibility = 'hidden'; });
+      const bgUrl = await lib.toPng(card, Object.assign({}, opts, { width: fm.w, height: fm.h }));
+      const bg = await this.loadImg(bgUrl);
+
+      let images = [];
+      if (imgRect) {
+        const pool = this.cyclePool(s);
+        images = (await Promise.all(pool.map(u => this.loadImg(u)))).filter(Boolean);
+      }
+      const layers = { w: fm.w, h: fm.h, bg, scrim, texts, imgRect, imgRect2, images, s: { scale1: s.scale1, posX1: s.posX1, posY1: s.posY1, scale2: s.scale2, posX2: s.posX2, posY2: s.posY2 } };
+      this.setState({ animLayers: layers, animStatus: '', animT: 0 }, () => {
+        const c = this.canvasRef.current || this._offCanvas;
+        if (c) { c.width = fm.w; c.height = fm.h; }
+        this._t = 0;
+        this.drawFrame(0);
+        this.setState({ animPlaying: true }, () => this.startPlay());
+      });
+    } catch (e) {
+      this.setState({ animStatus: 'Layer build failed: ' + (e && e.message ? e.message : e) });
+    } finally {
+      iframe.remove();
+    }
+  }
+
+  animTotal() {
+    const c = this.state.anim;
+    const L = this.state.animLayers;
+    const shown = L ? L.texts.filter(tl => this.layerCfg(tl.sel).visible !== false) : [];
+    const nText = L ? shown.length : 2;
+    const maxDelay = shown.reduce((m, tl) => Math.max(m, this.layerCfg(tl.sel).delay || 0), 0) * 1000;
+    const n = L && L.images ? Math.max(1, Math.min(L.images.length, c.imageCount)) : 1;
+    const entrance = 700;
+    const imgEnd = L && L.imgRect ? entrance + n * c.hold * 1000 + (n - 1) * c.transDuration * 1000 : 0;
+    const textEnd = (c.textDelay + c.textDuration) * 1000 + c.textStagger * 1000 * Math.max(0, nText - 1) + maxDelay;
+    return Math.max(imgEnd, textEnd) + 400;
+  }
+
+  drawCover(ctx, img, rect, scale, posX, posY, zoom, panX, panY, alpha, dxAll) {
+    if (!img) return;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.beginPath();
+    const r = Math.min(rect.r || 0, rect.w / 2, rect.h / 2);
+    if (ctx.roundRect) ctx.roundRect(rect.x, rect.y, rect.w, rect.h, r);
+    else ctx.rect(rect.x, rect.y, rect.w, rect.h);
+    ctx.clip();
+    const base = Math.max(rect.w / img.width, rect.h / img.height) * scale * zoom;
+    const dw = img.width * base, dh = img.height * base;
+    const dx = rect.x + (rect.w - dw) * (posX / 100) + (panX || 0) + (dxAll || 0);
+    const dy = rect.y + (rect.h - dh) * (posY / 100) + (panY || 0);
+    ctx.drawImage(img, dx, dy, dw, dh);
+    ctx.restore();
+  }
+
+  imageStateAt(t, n) {
+    const c = this.state.anim;
+    const entrance = 700;
+    const hold = c.hold * 1000, trans = c.transDuration * 1000;
+    if (n <= 1) return { iA: 0, iB: 0, mix: 0, prog: Math.min(1, t / 8000) };
+    const seg = hold + trans;
+    const tc = Math.max(0, t - entrance);
+    const k = Math.floor(tc / seg);
+    const within = tc - k * seg;
+    const iA = k % n;
+    if (within < hold) return { iA, iB: (iA + 1) % n, mix: 0, prog: within / hold };
+    return { iA, iB: (iA + 1) % n, mix: (within - hold) / trans, prog: 1 };
+  }
+
+  drawFrame(t) {
+    const L = this.state.animLayers;
+    const canvas = this.canvasRef.current || this._offCanvas;
+    if (!L || !canvas) return;
+    const c = this.state.anim;
+    const ease = this.EASINGS[c.easing] || this.EASINGS.smooth;
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, L.w, L.h);
+    if (L.bg) ctx.drawImage(L.bg, 0, 0, L.w, L.h);
+
+    if (L.imgRect && L.images.length) {
+      const n = Math.max(1, Math.min(L.images.length, c.imageCount));
+      const entrance = 700;
+      const ep = Math.min(1, t / entrance);
+      const ee = ease(Math.max(0, ep));
+      let eAlpha = 1, eZoom = 1, eDx = 0;
+      if (c.imageEntrance === 'fade') eAlpha = ee;
+      if (c.imageEntrance === 'scale') { eAlpha = ee; eZoom = 1.18 - 0.18 * ee; }
+      if (c.imageEntrance === 'slide') { eAlpha = ee; eDx = (1 - ee) * -L.imgRect.w * 0.25; }
+      const st = this.imageStateAt(t, n);
+      const kb = (prog, idx) => {
+        if (!c.kenburns) return { z: 1, px: 0, py: 0 };
+        const dir = idx % 2 === 0 ? 1 : -1;
+        return { z: 1 + c.kbAmount * prog, px: dir * prog * L.imgRect.w * 0.02, py: -prog * L.imgRect.h * 0.015 };
+      };
+      const drawIn = (rect, shift, sc, px, py) => {
+        const iA = (st.iA + shift) % n, iB = (st.iB + shift) % n;
+        const ka = kb(st.prog, iA);
+        if (st.mix <= 0 || c.transition === 'cut') {
+          const idx = (st.mix > 0.5 && c.transition === 'cut') ? iB : iA;
+          this.drawCover(ctx, L.images[idx], rect, sc, px, py, eZoom * ka.z, ka.px, ka.py, eAlpha, eDx);
+        } else {
+          const m = ease(st.mix);
+          const kbB = kb(0, iB);
+          if (c.transition === 'slide') {
+            this.drawCover(ctx, L.images[iA], rect, sc, px, py, ka.z, ka.px, ka.py, 1, -m * rect.w);
+            this.drawCover(ctx, L.images[iB], rect, sc, px, py, kbB.z, kbB.px, kbB.py, 1, (1 - m) * rect.w);
+          } else if (c.transition === 'zoom') {
+            this.drawCover(ctx, L.images[iA], rect, sc, px, py, ka.z, ka.px, ka.py, 1 - m, 0);
+            this.drawCover(ctx, L.images[iB], rect, sc, px, py, (1.15 - 0.15 * m) * kbB.z, kbB.px, kbB.py, m, 0);
+          } else {
+            this.drawCover(ctx, L.images[iA], rect, sc, px, py, ka.z, ka.px, ka.py, 1, 0);
+            this.drawCover(ctx, L.images[iB], rect, sc, px, py, kbB.z, kbB.px, kbB.py, m, 0);
+          }
+        }
+      };
+      drawIn(L.imgRect, 0, L.s.scale1, L.s.posX1, L.s.posY1);
+      if (L.imgRect2) drawIn(L.imgRect2, 1, L.s.scale2, L.s.posX2, L.s.posY2);
+    }
+
+    if (L.scrim) ctx.drawImage(L.scrim, 0, 0, L.w, L.h);
+
+    const shown = L.texts.filter(tl => this.layerCfg(tl.sel).visible !== false);
+    shown.forEach((tl, i) => {
+      const cfg = this.layerCfg(tl.sel);
+      const eff = (cfg.effect && cfg.effect !== 'global') ? cfg.effect : c.textEffect;
+      const start = c.textDelay * 1000 + i * c.textStagger * 1000 + (cfg.delay || 0) * 1000;
+      let p = eff === 'none' ? 1 : (t - start) / (c.textDuration * 1000);
+      p = Math.max(0, Math.min(1, p));
+      const e = ease(p);
+      if (e <= 0) return;
+      ctx.save();
+      ctx.globalAlpha = Math.max(0, Math.min(1, e));
+      let dx = 0, dy = 0, sc = 1;
+      if (eff === 'rise') dy = (1 - e) * 70;
+      if (eff === 'slide') dx = (1 - e) * -90;
+      if (eff === 'scale') sc = 0.88 + 0.12 * e;
+      const r = tl.rect;
+      if (sc !== 1) {
+        ctx.translate(r.x + r.w / 2, r.y + r.h / 2);
+        ctx.scale(sc, sc);
+        ctx.translate(-(r.x + r.w / 2), -(r.y + r.h / 2));
+      }
+      ctx.drawImage(tl.img, dx, dy, L.w, L.h);
+      ctx.restore();
+    });
+  }
+
+  startPlay() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this._playStart = performance.now() - (this._t || 0);
+    const step = () => {
+      if (!this.state.animPlaying || this.state.mode !== 'anim') return;
+      let t = performance.now() - this._playStart;
+      const total = this.animTotal();
+      if (t >= total) {
+        if (this.state.anim.loop) { this._playStart = performance.now(); t = 0; }
+        else { t = total; this._t = t; this.drawFrame(t); this.setState({ animPlaying: false, animT: Math.round(t) }); return; }
+      }
+      this._t = t;
+      this.drawFrame(t);
+      if (performance.now() - (this._lastTick || 0) > 200) {
+        this._lastTick = performance.now();
+        this.setState({ animT: Math.round(t) });
+      }
+      this._raf = requestAnimationFrame(step);
+    };
+    this._raf = requestAnimationFrame(step);
+  }
+
+  async exportVideo(sOverride) {
+    const L = this.state.animLayers;
+    const canvas = this.canvasRef.current || this._offCanvas;
+    if (!L || !canvas || this._recording) return;
+    if (!window.MediaRecorder) { this.setState({ animStatus: 'This browser cannot record video' }); return; }
+    const mimes = ['video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'];
+    const mime = mimes.find(m => MediaRecorder.isTypeSupported(m));
+    if (!mime) { this.setState({ animStatus: 'No supported video format' }); return; }
+    this._recording = true;
+    if (this._raf) cancelAnimationFrame(this._raf);
+    this.setState({ animPlaying: false, animStatus: 'Recording ' + (mime.indexOf('mp4') >= 0 ? 'MP4' : 'WebM') + '...' });
+    try {
+      const stream = canvas.captureStream(30);
+      const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 14000000 });
+      const chunks = [];
+      rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
+      const stopped = new Promise(res => { rec.onstop = res; });
+      const total = this.animTotal();
+      rec.start(250);
+      const t0 = performance.now();
+      await new Promise(res => {
+        const step = () => {
+          const t = performance.now() - t0;
+          this.drawFrame(Math.min(t, total));
+          if (t >= total + 150 || this._cancelExport) res();
+          else requestAnimationFrame(step);
+        };
+        step();
+      });
+      rec.stop();
+      await stopped;
+      if (this._cancelExport) {
+        this.setState({ animStatus: 'Export stopped' });
+        this._recording = false;
+        return;
+      }
+      const blob = new Blob(chunks, { type: mime });
+      const ext = mime.indexOf('mp4') >= 0 ? 'mp4' : 'webm';
+      const s = sOverride || this.cur();
+      const url = URL.createObjectURL(blob);
+      this.download(url, this.slug(s.title) + '_' + this.state.active.replace('.html', '') + '_' + s.format + '_anim.' + ext);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      this.setState({ animStatus: ext === 'webm' ? 'Saved as WebM (this browser cannot encode MP4)' : '' });
+    } catch (e) {
+      this.setState({ animStatus: 'Recording failed: ' + (e && e.message ? e.message : e) });
+    } finally {
+      this._recording = false;
+    }
+  }
+
+  setAnim(patch) {
+    this.setState({ anim: Object.assign({}, this.state.anim, patch) }, () => {
+      this.persist();
+      if (patch.imageCount !== undefined) { this._builtKey = ''; this.ensureLayers(); }
+      else this.drawFrame(this._t || 0);
+    });
+  }
+
+  componentWillUnmount() {
+    if (this._raf) cancelAnimationFrame(this._raf);
+    if (this._reelRaf) cancelAnimationFrame(this._reelRaf);
+    if (this._videoUrl) URL.revokeObjectURL(this._videoUrl);
+  }
+
+  reelCanvasRef = React.createRef();
+
+  reelSkinNote() {
+    const skins = this.reelSkins();
+    const skin = skins.find(k => k.id === this.state.reel.skin) || skins[0];
+    return skin.name + (skin.img ? ' · generated frame' : '');
+  }
+
+  rrPath(ctx, x, y, w, h, r) {
+    r = Math.max(0, Math.min(r || 0, w / 2, h / 2));
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  reelStripes(ctx, y, h) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(0, y, 1080, h); ctx.clip();
+    ctx.fillStyle = '#F2EFE8'; ctx.fillRect(0, y, 1080, h);
+    ctx.fillStyle = '#141414';
+    for (let x = -h * 2; x < 1080 + h; x += 84) {
+      ctx.beginPath();
+      ctx.moveTo(x, y + h); ctx.lineTo(x + h, y); ctx.lineTo(x + h + 42, y); ctx.lineTo(x + 42, y + h);
+      ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  coverDraw(ctx, media, mw, mh, rect, zoom) {
+    if (!mw || !mh) return;
+    const sc = Math.max(rect.w / mw, rect.h / mh) * (zoom || 1);
+    const dw = mw * sc, dh = mh * sc;
+    ctx.drawImage(media, rect.x + (rect.w - dw) / 2, rect.y + (rect.h - dh) / 2, dw, dh);
+  }
+
+  drawTimecode(ctx) {
+    const v = this._video;
+    const fps = this._fps || 30;
+    const t = v && (this.state.reelPlaying || this._recording) ? v.currentTime : this.state.reelT / 1000;
+    const pad = (n) => ('0' + Math.floor(n)).slice(-2);
+    const str = pad(t / 3600) + ':' + pad((t / 60) % 60) + ':' + pad(t % 60) + ':' + pad((t % 1) * fps);
+    const y = this.state.reel.tcPos === 'bottom' ? (this.state.reel.skin === 'noirtc' ? 1600 : 1630) : 170;
+    ctx.save();
+    const tcs = Number(this.state.reel.tcScale) || 1;
+    ctx.translate(540, y + 75);
+    ctx.scale(tcs, tcs);
+    ctx.translate(-540, -(y + 75));
+    ctx.fillStyle = 'rgba(8,8,8,0.85)';
+    this.rrPath(ctx, 70, y, 940, 150, 14);
+    ctx.fill();
+    ctx.strokeStyle = '#2A2A2A';
+    ctx.lineWidth = 3;
+    this.rrPath(ctx, 70, y, 940, 150, 14);
+    ctx.stroke();
+    ctx.textBaseline = 'middle';
+    ctx.font = '700 22px "JetBrains Mono", monospace';
+    try { ctx.letterSpacing = '4px'; } catch (e) {}
+    ctx.fillStyle = '#8A8A86';
+    ctx.textAlign = 'left';
+    ctx.fillText('TC', 100, y + 42);
+    ctx.textAlign = 'right';
+    ctx.fillText(fps + ' FPS', 980, y + 42);
+    ctx.font = '700 86px "JetBrains Mono", monospace';
+    try { ctx.letterSpacing = '10px'; } catch (e) {}
+    ctx.textAlign = 'center';
+    ctx.shadowColor = '#E8231F';
+    ctx.shadowBlur = 26;
+    ctx.fillStyle = '#FF4438';
+    ctx.fillText(str, 540, y + 90);
+    ctx.restore();
+  }
+
+  reelSkins() {
+    const RED = '#E8231F', INK = '#141414', PAPER = '#F2EFE8';
+    return [
+      { id: 'signal', name: 'Signal Frame', light: false,
+        under: (ctx) => { ctx.fillStyle = RED; ctx.fillRect(0, 0, 1080, 1920); },
+        video: { x: 36, y: 36, w: 1008, h: 1584, r: 0 },
+        logoPos: { x: 88, y: 1668, h: 62 }, footerY: 1816 },
+      { id: 'clapper', name: 'Clapper', light: false,
+        under: (ctx) => { ctx.fillStyle = INK; ctx.fillRect(0, 0, 1080, 1920); },
+        accent: (ctx) => { this.reelStripes(ctx, 0, 70); this.reelStripes(ctx, 1850, 70); },
+        video: { x: 0, y: 110, w: 1080, h: 1500, r: 0 },
+        logoPos: { x: 88, y: 1656, h: 58 }, footerY: 1790 },
+      { id: 'paper', name: 'Paper Editorial', light: true,
+        under: (ctx) => { ctx.fillStyle = PAPER; ctx.fillRect(0, 0, 1080, 1920); },
+        accent: (ctx) => { ctx.fillStyle = RED; ctx.fillRect(64, 1742, 140, 12); },
+        video: { x: 64, y: 250, w: 952, h: 1420, r: 24 },
+        logoPos: { x: 64, y: 92, h: 64 }, footerY: 1826 },
+      { id: 'noir', name: 'Cinematic Noir', light: false,
+        under: (ctx) => { ctx.fillStyle = '#0E0E0E'; ctx.fillRect(0, 0, 1080, 1920); },
+        accent: (ctx) => { ctx.fillStyle = RED; ctx.fillRect(1062, 0, 18, 1920); },
+        over: (ctx) => {
+          let g = ctx.createLinearGradient(0, 0, 0, 320);
+          g.addColorStop(0, 'rgba(0,0,0,.7)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g; ctx.fillRect(0, 0, 1080, 320);
+          g = ctx.createLinearGradient(0, 1500, 0, 1920);
+          g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.8)');
+          ctx.fillStyle = g; ctx.fillRect(0, 1500, 1080, 420);
+        },
+        video: { x: 0, y: 0, w: 1080, h: 1920, r: 0 },
+        logoPos: { center: true, y: 84, h: 58 }, footerY: 1816, footerCenter: true },
+      { id: 'split', name: 'Red Split', light: false,
+        under: (ctx) => {
+          ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, 1080, 1920);
+          ctx.fillStyle = RED; ctx.fillRect(0, 0, 1080, 250); ctx.fillRect(0, 1670, 1080, 250);
+        },
+        accent: (ctx) => { ctx.fillStyle = INK; ctx.fillRect(0, 250, 1080, 8); ctx.fillRect(0, 1662, 1080, 8); },
+        video: { x: 0, y: 258, w: 1080, h: 1404, r: 0 },
+        logoPos: { x: 88, y: 92, h: 64 }, footerY: 1798 },
+      { id: 'noirtc', name: 'Noir + Timecode', light: false,
+        under: (ctx) => { ctx.fillStyle = '#0E0E0E'; ctx.fillRect(0, 0, 1080, 1920); },
+        accent: (ctx) => { ctx.fillStyle = '#E8231F'; ctx.fillRect(1062, 0, 18, 1920); },
+        over: (ctx) => {
+          let g = ctx.createLinearGradient(0, 0, 0, 320);
+          g.addColorStop(0, 'rgba(0,0,0,.7)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = g; ctx.fillRect(0, 0, 1080, 320);
+          g = ctx.createLinearGradient(0, 1500, 0, 1920);
+          g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,.8)');
+          ctx.fillStyle = g; ctx.fillRect(0, 1500, 1080, 420);
+          this.drawTimecode(ctx);
+        },
+        video: { x: 0, y: 0, w: 1080, h: 1920, r: 0 },
+        logoPos: { center: true, y: 84, h: 58 }, footerY: 1816, footerCenter: true },
+      { id: 'tcode', name: 'Timecode Slate', light: false,
+        under: (ctx) => { ctx.fillStyle = '#0E0E0E'; ctx.fillRect(0, 0, 1080, 1920); },
+        over: (ctx) => this.drawTimecode(ctx),
+        video: { x: 0, y: 0, w: 1080, h: 1920, r: 0 },
+        logoPos: { x: 88, y: 84, h: 56 }, footerY: 1848 },
+      { id: 'ai-slate', name: 'Film Slate · AI frame', light: false, img: 'frame-a', frameStroke: '#FFFFFF',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 12 }, logoPos: { center: true, y: 110, h: 56 }, footerY: 1800, footerCenter: true },
+      { id: 'ai-edit', name: 'Edit Suite · AI frame', light: false, img: 'frame-c', frameStroke: '#FFFFFF',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 8 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-grade', name: 'Colour Grade · AI frame', light: false, img: 'frame-d', frameStroke: '#FFFFFF',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 8 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-shop', name: 'Gear Shop · AI frame', light: true, img: 'frame-e', frameStroke: '#141414',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 16 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-tape', name: 'Camera Tape 1 · dark', light: false, img: 'frame-b', frameStroke: '#E8231F',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 12 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-tape2', name: 'Camera Tape 2 · paper', light: true, img: 'frame-f', frameStroke: '#141414',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 12 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-tape3', name: 'Camera Tape 3 · red', light: false, img: 'frame-g', frameStroke: '#FFFFFF',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 12 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-tape4', name: 'Camera Tape 4 · airy', light: true, img: 'frame-h', frameStroke: '#141414',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 12 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true },
+      { id: 'ai-tape5', name: 'Camera Tape 5 · border', light: true, img: 'frame-i', frameStroke: '#141414',
+        video: { x: 84, y: 330, w: 912, h: 1230, r: 12 }, logoPos: { center: true, y: 100, h: 56 }, footerY: 1804, footerCenter: true }
+    ];
+  }
+
+  ensureReelAssets() {
+    if (this._reelAssets) return;
+    const A = this._reelAssets = { frames: {}, badges: {} };
+    ['new', 'hot', 'eyes'].forEach(k => {
+      this.loadImg(this.assetUrl('clore-templates/reel-frames/badge-' + k + '.png')).then(im => { A.badges[k] = im; this.drawReel(); });
+    });
+    this.loadImg(this.assetUrl('clore-templates/preview-assets/logo-ink-transparent.png')).then(im => { A.ink = im; this.drawReel(); });
+    this.loadImg(this.assetUrl('clore-templates/preview-assets/logo-white-transparent.png')).then(im => { A.white = im; this.drawReel(); });
+    ['frame-a', 'frame-b', 'frame-c', 'frame-d', 'frame-e', 'frame-f', 'frame-g', 'frame-h', 'frame-i'].forEach(k => {
+      this.loadImg(this.assetUrl('clore-templates/reel-frames/' + k + '.png')).then(im => { A.frames[k] = im; this.drawReel(); });
+    });
+    this.syncCtaImg();
+    if (document.fonts) {
+      document.fonts.load('900 100px Archivo').catch(() => {});
+      document.fonts.load('700 30px "JetBrains Mono"').catch(() => {});
+      document.fonts.ready.then(() => this.drawReel()).catch(() => {});
+    }
+  }
+
+  setVideo(file) {
+    if (!file || !file.type || file.type.indexOf('video') !== 0) {
+      if (file) this.setState({ reelStatus: 'That file is not a video' });
+      return;
+    }
+    if (this._videoUrl) URL.revokeObjectURL(this._videoUrl);
+    this._videoUrl = URL.createObjectURL(file);
+    const v = this._video || document.createElement('video');
+    this._video = v;
+    v.playsInline = true;
+    v.preload = 'auto';
+    v.onloadedmetadata = () => this.setState({ reelDur: v.duration, videoName: file.name, reelT: 0, reelStatus: '' }, () => {
+      if (v.requestVideoFrameCallback) this.measureFps(v);
+      else { try { v.currentTime = 0.01; } catch (e) { this.drawReel(); } }
+    });
+    v.onseeked = () => this.drawReel();
+    v.onended = () => {
+      const cta = this.state.reel.cta || {};
+      if (this.state.reelPlaying && cta.on) {
+        this._phase = 'cta';
+        this._ctaT = 0;
+        this._ctaStart = performance.now();
+      } else {
+        if (this._reelRaf) cancelAnimationFrame(this._reelRaf);
+        this.setState({ reelPlaying: false });
+      }
+    };
+    v.src = this._videoUrl;
+  }
+
+  shuffleBatch() {
+    const cat = (this.state.catalog || this.PRODUCTS.map((p, i) => this.productFromIdx(i))).slice();
+    for (let i = cat.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = cat[i]; cat[i] = cat[j]; cat[j] = t;
+    }
+    this.setState({ batch: cat.slice(0, 10) });
+  }
+
+  batchSettings(p) {
+    return Object.assign({}, this.cur(), {
+      product: p, title: p.title, eyebrow: p.eyebrow, price: p.price,
+      badge: this.cur().badge,
+      img1: p.images[0], img2: p.images[1] || p.images[0],
+      custom1: null, custom2: null,
+      scale1: 1, scale2: 1, posX1: 50, posY1: 50, posX2: 50, posY2: 50
+    });
+  }
+
+  stopExport() {
+    this._cancelExport = true;
+    this.setState({ exporting: 'Stopping...' });
+  }
+
+  async exportBatchVideos() {
+    if (this._recording || this.state.exporting) return;
+    this._cancelExport = false;
+    const items = this.state.batch || [];
+    if (!this._offCanvas) this._offCanvas = document.createElement('canvas');
+    for (let i = 0; i < items.length; i++) {
+      if (this._cancelExport) break;
+      const si = this.batchSettings(items[i]);
+      this.setState({ exporting: 'Video ' + (i + 1) + ' / ' + items.length + ' — building layers...' });
+      this.setState({ animLayers: null });
+      await this.buildLayers(si);
+      // wait for the layer state to land (buildLayers resolves before setState flushes)
+      let tries = 0;
+      while (!this.state.animLayers && tries < 40) {
+        await new Promise(r => setTimeout(r, 100));
+        tries++;
+      }
+      const L = this.state.animLayers;
+      if (!L) {
+        this.setState({ exporting: 'Layer build failed on item ' + (i + 1) });
+        this._builtKey = '';
+        return;
+      }
+      // size the (offscreen) canvas to full production dimensions BEFORE capture
+      const bc = this.canvasRef.current || this._offCanvas;
+      if (bc && (bc.width !== L.w || bc.height !== L.h)) { bc.width = L.w; bc.height = L.h; }
+      this.drawFrame(0);
+      this.setState({ exporting: 'Video ' + (i + 1) + ' / ' + items.length + ' — recording in real time...' });
+      await this.exportVideo(si);
+      await new Promise(r => setTimeout(r, 400));
+    }
+    this._builtKey = '';
+    this._cancelExport = false;
+    this.setState({ exporting: '', animLayers: null });
+  }
+
+  async exportBatch(type) {
+    if (this._recording || this.state.exporting) return;
+    this._cancelExport = false;
+    const ext = type === 'jpeg' ? 'jpg' : type;
+    const items = this.state.batch;
+    for (let i = 0; i < items.length; i++) {
+      if (this._cancelExport) break;
+      this.setState({ exporting: 'Exporting ' + (i + 1) + ' / ' + items.length + '...' });
+      try {
+        const si = this.batchSettings(items[i]);
+        const dataUrl = await this.capture(this.state.active, si, si.format, type);
+        this.download(dataUrl, this.slug(si.title) + '_' + this.state.active.replace('.html', '') + '_' + si.format + '.' + ext);
+        await new Promise(r => setTimeout(r, 600));
+      } catch (e) {
+        this.setState({ exporting: 'Failed on item ' + (i + 1) + ': ' + e });
+        return;
+      }
+    }
+    this._cancelExport = false;
+    this.setState({ exporting: '' });
+  }
+
+  assetUrl(p) {
+    const a = window.CLORE_ASSETS && window.CLORE_ASSETS[p];
+    if (typeof a === 'string' && a.indexOf('data:') === 0) return a;
+    return new URL(p, window.location.href).href;
+  }
+
+  measureFps(v) {
+    this._fps = 0;
+    const times = [];
+    const cb = (now, meta) => {
+      times.push(meta.mediaTime);
+      if (times.length >= 14) {
+        const ds = [];
+        for (let i = 1; i < times.length; i++) {
+          const d = times[i] - times[i - 1];
+          if (d > 0.001) ds.push(d);
+        }
+        if (ds.length >= 5) {
+          ds.sort((a, b) => a - b);
+          const f = Math.round(1 / ds[Math.floor(ds.length / 2)]);
+          if (f >= 10 && f <= 60) this._fps = f;
+        }
+        v.pause();
+        v.muted = false;
+        try { v.currentTime = 0.01; } catch (e) {}
+        this.forceUpdate();
+        return;
+      }
+      v.requestVideoFrameCallback(cb);
+    };
+    v.muted = true;
+    v.play().then(() => v.requestVideoFrameCallback(cb)).catch(() => {
+      v.muted = false;
+      try { v.currentTime = 0.01; } catch (e) {}
+    });
+  }
+
+  setReel(patch) {
+    this.setState({ reel: Object.assign({}, this.state.reel, patch) }, () => {
+      this.persist();
+      this.syncCtaImg();
+      this.drawReel();
+    });
+  }
+
+  setCta(patch) {
+    this.setReel({ cta: Object.assign({}, this.state.reel.cta || {}, patch) });
+  }
+
+  syncCtaImg() {
+    const cta = this.state.reel.cta || {};
+    if (cta.image && this._ctaImgSrc !== cta.image) {
+      this._ctaImgSrc = cta.image;
+      this.loadImg(cta.image).then(im => { this._ctaImg = im; this.drawReel(); });
+    }
+    if (!cta.image) { this._ctaImg = null; this._ctaImgSrc = null; }
+  }
+
+  wrapLines(ctx, text, maxW) {
+    const words = String(text || '').split(/\s+/);
+    const lines = [];
+    let line = '';
+    for (const wd of words) {
+      const trial = line ? line + ' ' + wd : wd;
+      if (ctx.measureText(trial).width > maxW && line) { lines.push(line); line = wd; }
+      else line = trial;
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  drawCtaCard(ctx, ctaT, el, A) {
+    const cta = this.state.reel.cta || {};
+    const BG = { red: '#E8231F', ink: '#141414', white: '#FFFFFF', paper: '#F2EFE8' };
+    const light = cta.bg === 'white' || cta.bg === 'paper';
+    ctx.fillStyle = BG[cta.bg] || '#E8231F';
+    ctx.fillRect(0, 0, 1080, 1920);
+    const e = 1 - Math.pow(1 - Math.min(1, Math.max(0, ctaT / 0.5)), 3);
+    const dy = (1 - e) * 46;
+    ctx.save();
+    ctx.globalAlpha = e;
+    if (el.logo) {
+      const lcc = this.state.reel.logoColor;
+      const logo = lcc === 'ink' ? A.ink : lcc === 'white' ? A.white : (light ? A.ink : A.white);
+      if (logo && logo.height) {
+        const h = 58, w = logo.width * (h / logo.height);
+        ctx.drawImage(logo, 540 - w / 2, 110 + dy, w, h);
+      }
+    }
+    if (this._ctaImg && this._ctaImg.width) {
+      const box = 1080 * ((Number(cta.imgSize) || 58) / 100);
+      const cy = 1920 * ((Number(cta.imgY) || 62) / 100);
+      const pad = 20;
+      const FR = { white: '#FFFFFF', red: '#E8231F', ink: '#141414' };
+      const rad = Number(cta.radius) || 0;
+      ctx.fillStyle = FR[cta.frame] || '#FFFFFF';
+      this.rrPath(ctx, 540 - box / 2 - pad, cy - box / 2 - pad + dy, box + pad * 2, box + pad * 2, rad);
+      ctx.fill();
+      ctx.save();
+      this.rrPath(ctx, 540 - box / 2, cy - box / 2 + dy, box, box, Math.max(0, rad - 10));
+      ctx.clip();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(540 - box / 2, cy - box / 2 + dy, box, box);
+      const im = this._ctaImg;
+      const sc = Math.min(box / im.width, box / im.height);
+      ctx.drawImage(im, 540 - (im.width * sc) / 2, cy - (im.height * sc) / 2 + dy, im.width * sc, im.height * sc);
+      ctx.restore();
+    }
+    const ty = 1920 * ((Number(cta.textY) || 28) / 100);
+    const size = Number(cta.size) || 104;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '900 ' + size + 'px Archivo, "Arial Black", sans-serif';
+    try { ctx.letterSpacing = (-0.03 * size).toFixed(1) + 'px'; } catch (er) {}
+    ctx.fillStyle = light ? '#141414' : '#FFFFFF';
+    const lines = this.wrapLines(ctx, String(cta.headline || '').toUpperCase(), 904);
+    const lh = size * 0.98;
+    lines.forEach((ln, i) => ctx.fillText(ln, 540, ty + dy + i * lh));
+    if (cta.sub) {
+      ctx.font = '700 34px "JetBrains Mono", monospace';
+      try { ctx.letterSpacing = '6px'; } catch (er) {}
+      ctx.fillStyle = cta.bg === 'red' ? '#FFFFFF' : '#E8231F';
+      ctx.fillText(String(cta.sub).toUpperCase(), 540, ty + dy + lines.length * lh + 16);
+    }
+    ctx.restore();
+  }
+
+  drawReel() {
+    const c = this.reelCanvasRef.current;
+    if (!c || this.state.mode !== 'reel') return;
+    if (c.width !== 1080) { c.width = 1080; c.height = 1920; }
+    const ctx = c.getContext('2d');
+    const A = this._reelAssets || { frames: {} };
+    const r = this.state.reel;
+    const skins = this.reelSkins();
+    const skin = skins.find(k => k.id === r.skin) || skins[0];
+    const el = r.elements || {};
+    ctx.clearRect(0, 0, 1080, 1920);
+    const vdurC = this.state.reelDur || 0;
+    const ctaC = r.cta || {};
+    let tNow;
+    const vEl = this._video;
+    if (this._phase === 'cta') tNow = vdurC + (this._ctaT || 0);
+    else if (vEl && (this.state.reelPlaying || this._recording)) tNow = vEl.currentTime;
+    else tNow = this.state.reelT / 1000;
+    if (ctaC.on && vdurC > 0 && tNow > vdurC + 0.001) {
+      this.drawCtaCard(ctx, tNow - vdurC, el, this._reelAssets || {});
+      return;
+    }
+    if (skin.img) {
+      const im = A.frames[skin.img];
+      if (im) this.coverDraw(ctx, im, im.width, im.height, { x: 0, y: 0, w: 1080, h: 1920 }, 1);
+      else { ctx.fillStyle = skin.light ? '#F2EFE8' : '#141414'; ctx.fillRect(0, 0, 1080, 1920); }
+    } else if (skin.under) skin.under(ctx);
+    if (skin.accent && el.accent) skin.accent(ctx);
+    const vr = skin.video;
+    ctx.save();
+    this.rrPath(ctx, vr.x, vr.y, vr.w, vr.h, vr.r || 0);
+    ctx.clip();
+    ctx.fillStyle = '#0B0B0B';
+    ctx.fillRect(vr.x, vr.y, vr.w, vr.h);
+    const v = this._video;
+    if (v && v.readyState >= 2 && v.videoWidth) {
+      this.coverDraw(ctx, v, v.videoWidth, v.videoHeight, vr, r.zoom);
+    } else {
+      ctx.fillStyle = '#54534F';
+      ctx.font = '700 34px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('DROP YOUR VIDEO', vr.x + vr.w / 2, vr.y + vr.h / 2);
+    }
+    ctx.restore();
+    if (skin.over) skin.over(ctx);
+    if (el.accent && skin.frameStroke) {
+      ctx.strokeStyle = skin.frameStroke;
+      ctx.lineWidth = 6;
+      this.rrPath(ctx, vr.x + 3, vr.y + 3, vr.w - 6, vr.h - 6, Math.max(0, (vr.r || 0) - 3));
+      ctx.stroke();
+    }
+    if (el.logo) {
+      const lc = r.logoColor;
+      const logo = lc === 'ink' ? A.ink : lc === 'white' ? A.white : (skin.light ? A.ink : A.white);
+      if (logo && logo.height) {
+        const lp = skin.logoPos || { x: 88, y: 90, h: 60 };
+        const w = logo.width * (lp.h / logo.height);
+        ctx.drawImage(logo, lp.center ? 540 - w / 2 : lp.x, lp.y, w, lp.h);
+      }
+    }
+    if (el.footer) {
+      const fy = skin.footerY || 1812;
+      ctx.font = '700 26px "JetBrains Mono", monospace';
+      try { ctx.letterSpacing = '5px'; } catch (e) {}
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = skin.light ? '#141414' : '#FFFFFF';
+      if (skin.footerCenter) {
+        ctx.textAlign = 'center';
+        ctx.fillText('3DFILMPARTS.COM', 540, fy);
+      } else {
+        ctx.textAlign = 'left';
+        ctx.fillText('3DFILMPARTS.COM', 88, fy);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#E8231F';
+        ctx.fillText('@3DFILMPARTS', 992, fy);
+      }
+      try { ctx.letterSpacing = '0px'; } catch (e) {}
+    }
+    if (el.progress && vdurC > 0) {
+      // Sits above Instagram's bottom caption/CTA zone (~320px) so it never collides with reel UI text
+      const p = Math.max(0, Math.min(1, tNow / vdurC));
+      const px = 70, pw = 940, py = 1566, ph = 24;
+      ctx.save();
+      ctx.fillStyle = 'rgba(20,20,20,0.62)';
+      this.rrPath(ctx, px, py, pw, ph, 12);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(242,239,232,0.5)';
+      ctx.lineWidth = 2;
+      this.rrPath(ctx, px, py, pw, ph, 12);
+      ctx.stroke();
+      if (p > 0.002) {
+        ctx.save();
+        this.rrPath(ctx, px + 3, py + 3, pw - 6, ph - 6, 9);
+        ctx.clip();
+        ctx.fillStyle = '#E8231F';
+        ctx.fillRect(px + 3, py + 3, (pw - 6) * p, ph - 6);
+        ctx.restore();
+      }
+      if (p > 0.01 && p < 0.99) {
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(px + 3 + (pw - 6) * p - 3, py - 4, 6, ph + 8);
+      }
+      ctx.restore();
+    }
+    const bconf = r.badge || {};
+    const bim = ((this._reelAssets || {}).badges || {})[bconf.id];
+    if (bconf.id && bconf.id !== 'none' && bim && bim.width) {
+      const animating = this.state.reelPlaying || this._recording;
+      const pop = animating ? 1 - Math.pow(1 - Math.min(1, tNow / 0.45), 3) : 1;
+      const bob = Math.sin(tNow * 2.2) * 10;
+      const rot = Math.sin(tNow * 1.7) * 0.06;
+      const size = 270 * Math.max(0.01, pop);
+      const bx = bconf.pos === 'left' ? 195 : bconf.pos === 'center' ? 540 : 885;
+      ctx.save();
+      ctx.translate(bx, 235 + bob);
+      ctx.rotate(rot);
+      ctx.globalAlpha = Math.max(0, Math.min(1, pop));
+      ctx.drawImage(bim, -size / 2, -size / 2, size, size);
+      ctx.restore();
+    }
+    (r.overlays || []).forEach(o => this.drawReelOverlay(ctx, o, tNow));
+  }
+
+  drawReelOverlay(ctx, o, t) {
+    const t0 = Number(o.start) || 0, dur = Number(o.dur) || 2;
+    if (t < t0 || t > t0 + dur) return;
+    const easeOut = (p) => 1 - Math.pow(1 - Math.min(1, Math.max(0, p)), 3);
+    const ein = easeOut((t - t0) / 0.5);
+    const eout = Math.min(1, Math.max(0, (t0 + dur - t) / 0.35));
+    let dx = 0, dy = 0, sc = 1, alpha = ein * eout;
+    if (o.effect === 'rise') dy = (1 - ein) * 70;
+    if (o.effect === 'slide') dx = (1 - ein) * -90;
+    if (o.effect === 'scale') sc = 0.85 + 0.15 * ein;
+    if (o.effect === 'none') alpha = eout;
+    const size = Number(o.size) || 90;
+    const y = 1920 * ((Number(o.y) || 60) / 100);
+    const text = String(o.text || '').toUpperCase();
+    ctx.save();
+    ctx.globalAlpha = Math.max(0, Math.min(1, alpha));
+    ctx.translate(540 + dx, y + dy);
+    ctx.scale(sc, sc);
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    if (o.kind === 'eyebrow') {
+      ctx.font = '700 ' + Math.round(size * 0.42) + 'px "JetBrains Mono", monospace';
+      try { ctx.letterSpacing = Math.round(size * 0.075) + 'px'; } catch (e) {}
+      ctx.fillStyle = '#E8231F';
+      ctx.fillText(text, 0, 0);
+    } else if (o.kind === 'badge') {
+      ctx.font = '700 ' + Math.round(size * 0.42) + 'px "JetBrains Mono", monospace';
+      try { ctx.letterSpacing = Math.round(size * 0.05) + 'px'; } catch (e) {}
+      const w = ctx.measureText(text).width;
+      const ph = Math.round(size * 0.95), pw = w + size * 0.9;
+      ctx.fillStyle = '#E8231F';
+      ctx.fillRect(-pw / 2, -ph / 2, pw, ph);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(text, 0, 0);
+    } else {
+      ctx.font = '900 ' + size + 'px Archivo, "Arial Black", sans-serif';
+      try { ctx.letterSpacing = (-0.03 * size).toFixed(1) + 'px'; } catch (e) {}
+      if (o.kind === 'headline-white') {
+        ctx.shadowColor = 'rgba(0,0,0,.45)';
+        ctx.shadowBlur = 28;
+      }
+      ctx.fillStyle = o.kind === 'headline-ink' ? '#141414' : '#FFFFFF';
+      const words = text.split(/\s+/);
+      const lines = [];
+      let line = '';
+      for (const wd of words) {
+        const trial = line ? line + ' ' + wd : wd;
+        if (ctx.measureText(trial).width > 904 && line) { lines.push(line); line = wd; }
+        else line = trial;
+      }
+      if (line) lines.push(line);
+      const lh = size * 0.98;
+      const y0 = -((lines.length - 1) / 2) * lh;
+      lines.forEach((ln, i) => ctx.fillText(ln, 0, y0 + i * lh));
+    }
+    ctx.restore();
+  }
+
+  readCtaImg(file) {
+    if (!file || !file.type || file.type.indexOf('image') !== 0) return;
+    const reader = new FileReader();
+    reader.onload = () => this.setCta({ image: reader.result });
+    reader.readAsDataURL(file);
+  }
+
+  toggleReelPlay() {
+    const v = this._video;
+    if (!v) { this.setState({ reelStatus: 'Add a video first' }); return; }
+    if (this.state.reelPlaying) {
+      v.pause();
+      this.stopReel();
+    } else {
+      const vdur = this.state.reelDur || 0;
+      const cta = this.state.reel.cta || {};
+      const tSec = this.state.reelT / 1000;
+      if (cta.on && vdur > 0 && tSec > vdur + 0.05) {
+        this._phase = 'cta';
+        this._ctaT = tSec - vdur;
+        this._ctaStart = performance.now() - this._ctaT * 1000;
+        this.setState({ reelPlaying: true, reelStatus: '' }, () => this.startReelLoop());
+        return;
+      }
+      this._phase = 'video';
+      if (v.ended || (vdur && tSec >= vdur - 0.05)) { try { v.currentTime = 0; } catch (e) {} }
+      this.setState({ reelPlaying: true, reelStatus: '' }, () => {
+        v.play().then(() => this.startReelLoop()).catch(() => {
+          v.muted = true;
+          v.play().then(() => this.startReelLoop()).catch(() => this.setState({ reelPlaying: false, reelStatus: 'Could not start playback' }));
+        });
+      });
+    }
+  }
+
+  startReelLoop() {
+    if (this._reelRaf) cancelAnimationFrame(this._reelRaf);
+    const step = () => {
+      if (!this.state.reelPlaying || this.state.mode !== 'reel') return;
+      const vdur = this.state.reelDur || 0;
+      if (this._phase === 'cta') {
+        const cta = this.state.reel.cta || {};
+        this._ctaT = (performance.now() - this._ctaStart) / 1000;
+        if (this._ctaT >= (Number(cta.dur) || 3)) {
+          this._phase = 'video';
+          this.setState({ reelPlaying: false, reelT: 0 }, () => this.drawReel());
+          return;
+        }
+        this.drawReel();
+        if ((performance.now() - (this._reelTick || 0)) > 200) {
+          this._reelTick = performance.now();
+          this.setState({ reelT: Math.round((vdur + this._ctaT) * 1000) });
+        }
+        this._reelRaf = requestAnimationFrame(step);
+        return;
+      }
+      this.drawReel();
+      const v = this._video;
+      if (v && (performance.now() - (this._reelTick || 0)) > 200) {
+        this._reelTick = performance.now();
+        this.setState({ reelT: Math.round(v.currentTime * 1000) });
+      }
+      this._reelRaf = requestAnimationFrame(step);
+    };
+    this._reelRaf = requestAnimationFrame(step);
+  }
+
+  stopReel() {
+    if (this._reelRaf) cancelAnimationFrame(this._reelRaf);
+    if (this._video) this._video.pause();
+    if (this.state.reelPlaying) this.setState({ reelPlaying: false });
+  }
+
+  async exportReel() {
+    const v = this._video, c = this.reelCanvasRef.current;
+    if (!v) { this.setState({ reelStatus: 'Add a video first' }); return; }
+    if (!c || this._recording) return;
+    if (!window.MediaRecorder) { this.setState({ reelStatus: 'This browser cannot record video' }); return; }
+    const mimes = ['video/mp4;codecs=avc1.640028', 'video/mp4;codecs=avc1.42E01E', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'];
+    const mime = mimes.find(m => MediaRecorder.isTypeSupported(m));
+    if (!mime) { this.setState({ reelStatus: 'No supported video format' }); return; }
+    this._recording = true;
+    this.stopReel();
+    const ext = mime.indexOf('mp4') >= 0 ? 'mp4' : 'webm';
+    this.setState({ reelStatus: 'Recording ' + ext.toUpperCase() + ' at ' + (this._fps || 30) + ' fps in real time (' + Math.round(this.state.reelDur) + 's)... keep this tab visible.' });
+    try {
+      await new Promise((res) => {
+        const done = () => { v.removeEventListener('seeked', done); res(); };
+        v.addEventListener('seeked', done);
+        try { v.currentTime = 0; } catch (e) { v.removeEventListener('seeked', done); res(); }
+      });
+      this.drawReel();
+      const stream = c.captureStream(this._fps || 30);
+      try {
+        const vs = v.captureStream ? v.captureStream() : (v.mozCaptureStream ? v.mozCaptureStream() : null);
+        if (vs) vs.getAudioTracks().forEach(tr => stream.addTrack(tr));
+      } catch (e) { /* no audio track available */ }
+      const rec = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 24000000, audioBitsPerSecond: 192000 });
+      const chunks = [];
+      rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+      const stopped = new Promise((res) => { rec.onstop = res; });
+      rec.start(250);
+      this._phase = 'video';
+      await v.play();
+      await new Promise((res) => {
+        const step = () => {
+          this.drawReel();
+          if (v.ended) res();
+          else requestAnimationFrame(step);
+        };
+        step();
+      });
+      const cta = this.state.reel.cta || {};
+      if (cta.on) {
+        this._phase = 'cta';
+        this._ctaT = 0;
+        this._ctaStart = performance.now();
+        const cdur = Number(cta.dur) || 3;
+        await new Promise((res) => {
+          const step = () => {
+            this._ctaT = (performance.now() - this._ctaStart) / 1000;
+            this.drawReel();
+            if (this._ctaT >= cdur) res();
+            else requestAnimationFrame(step);
+          };
+          step();
+        });
+        this._phase = 'video';
+      }
+      rec.stop();
+      await stopped;
+      const blob = new Blob(chunks, { type: mime.split(';')[0] });
+      const url = URL.createObjectURL(blob);
+      const base = this.slug((this.state.videoName || 'reel').replace(/\.[a-z0-9]+$/i, ''));
+      this.download(url, base + '_' + this.state.reel.skin + '_story_reel.' + ext);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      this.setState({ reelStatus: ext === 'webm' ? 'Saved as WebM (this browser cannot encode MP4)' : '', reelPlaying: false, reelT: 0 });
+    } catch (e) {
+      this.setState({ reelStatus: 'Export failed: ' + e });
+    }
+    this._recording = false;
+  }
+
+  reelVals(toggle, btn) {
+    const r = this.state.reel;
+    const skins = this.reelSkins();
+    const dur = this.state.reelDur || 0;
+    const cta = r.cta || {};
+    const total = dur + (cta.on ? (Number(cta.dur) || 3) : 0);
+    const fmtT = (s) => Math.floor(s / 60) + ':' + ('0' + Math.floor(s % 60)).slice(-2);
+    const fit = Math.min(700 / 1920, 1100 / 1080);
+    const el = r.elements || {};
+    const elBtn = (key, label) => ({
+      label: label + ': ' + (el[key] ? 'ON' : 'OFF'),
+      style: toggle(!!el[key]),
+      onPick: () => this.setReel({ elements: Object.assign({}, el, { [key]: !el[key] }) })
+    });
+    return {
+      skinRows: skins.map(k => ({ name: k.name, style: btn(k.id === r.skin), onPick: () => this.setReel({ skin: k.id }) })),
+      tcodeSel: r.skin === 'tcode' || r.skin === 'noirtc',
+      tcPosOpts: [['top', 'TC at top'], ['bottom', 'TC at bottom']].map(o => ({
+        label: o[1], style: toggle(o[0] === (r.tcPos || 'top')), onPick: () => this.setReel({ tcPos: o[0] })
+      })),
+      elementRows: [elBtn('logo', 'Logo'), elBtn('footer', 'Footer'), elBtn('accent', 'Accents'), elBtn('progress', 'Progress bar')],
+      reelLogoColorOpts: [['auto', 'Auto'], ['ink', 'Black'], ['white', 'White']].map(o => ({
+        label: o[1], style: toggle(o[0] === (r.logoColor || 'auto')), onPick: () => this.setReel({ logoColor: o[0] })
+      })),
+      tcScale: Number(r.tcScale) || 1,
+      tcScaleLabel: (Number(r.tcScale) || 1).toFixed(2) + 'x',
+      onTcScale: (e) => this.setReel({ tcScale: Number(e.target.value) }),
+      badgeOpts: [['none', 'Off'], ['new', 'New to store'], ['hot', 'Hot price'], ['eyes', 'Awe eyes']].map(o => ({
+        label: o[1], style: toggle(o[0] === ((r.badge || {}).id || 'none')),
+        onPick: () => this.setReel({ badge: Object.assign({}, r.badge || {}, { id: o[0] }) })
+      })),
+      badgePosOpts: [['left', 'Top left'], ['center', 'Top middle'], ['right', 'Top right']].map(o => ({
+        label: o[1], style: toggle(o[0] === ((r.badge || {}).pos || 'right')),
+        onPick: () => this.setReel({ badge: Object.assign({}, r.badge || {}, { pos: o[0] }) })
+      })),
+      badgeOn: !!((r.badge || {}).id && (r.badge || {}).id !== 'none'),
+      onVideoDrop: (e) => { e.preventDefault(); this.setVideo(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); },
+      onVideoFile: (e) => this.setVideo(e.target.files && e.target.files[0]),
+      videoName: this.state.videoName,
+      videoDurLabel: fmtT(dur),
+      reelZoom: r.zoom || 1,
+      reelZoomLabel: (r.zoom || 1).toFixed(2) + 'x',
+      onReelZoom: (e) => this.setReel({ zoom: Number(e.target.value) }),
+      onAddOverlay: () => {
+        const v = this._video;
+        const o = { id: 'o' + Date.now(), text: 'NEW TEXT', kind: 'headline-white', start: v ? Math.round(v.currentTime * 10) / 10 : 0, dur: 2.5, size: 92, y: 62, effect: 'rise' };
+        this.setReel({ overlays: (r.overlays || []).concat([o]) });
+      },
+      overlayRows: (r.overlays || []).map(o => {
+        const up = (patch) => this.setReel({ overlays: r.overlays.map(x => x.id === o.id ? Object.assign({}, x, patch) : x) });
+        return {
+          text: o.text, kind: o.kind, effect: o.effect,
+          start: o.start, dur: o.dur, size: o.size, y: o.y,
+          startLabel: Number(o.start).toFixed(1) + 's',
+          durLabel: Number(o.dur).toFixed(1) + 's',
+          sizeLabel: o.size + 'px',
+          yLabel: o.y + '%',
+          startMax: Math.max(1, Math.round(dur * 10) / 10),
+          onText: (e) => up({ text: e.target.value }),
+          onKind: (e) => up({ kind: e.target.value }),
+          onEffect: (e) => up({ effect: e.target.value }),
+          onStart: (e) => up({ start: Number(e.target.value) }),
+          onDur: (e) => up({ dur: Number(e.target.value) }),
+          onSize: (e) => up({ size: Number(e.target.value) }),
+          onY: (e) => up({ y: Number(e.target.value) }),
+          onRemove: () => this.setReel({ overlays: r.overlays.filter(x => x.id !== o.id) })
+        };
+      }),
+      reelCanvasRef: this.reelCanvasRef,
+      reelWrapStyle: { width: Math.round(1080 * fit), height: Math.round(1920 * fit), overflow: 'hidden', position: 'relative', flex: '0 0 auto', background: '#0B0B0B', boxShadow: '0 22px 48px rgba(20,20,20,.22)' },
+      reelCanvasStyle: { width: Math.round(1080 * fit), height: Math.round(1920 * fit), display: 'block' },
+      reelStatus: this.state.reelStatus,
+      reelPlayLabel: this.state.reelPlaying ? 'Pause' : 'Play',
+      onReelPlay: () => this.toggleReelPlay(),
+      reelDurMs: Math.max(1000, Math.round(total * 1000)),
+      reelT: this.state.reelT,
+      ctaOn: !!cta.on,
+      ctaToggleLabel: cta.on ? 'ON' : 'OFF',
+      ctaToggleStyle: toggle(!!cta.on),
+      onCtaToggle: () => this.setCta({ on: !cta.on }),
+      ctaDur: Number(cta.dur) || 3,
+      ctaDurLabel: (Number(cta.dur) || 3).toFixed(1) + 's',
+      onCtaDur: (e) => this.setCta({ dur: Number(e.target.value) }),
+      ctaBgOpts: [['red', 'Red'], ['ink', 'Ink'], ['white', 'White'], ['paper', 'Paper']].map(o => ({
+        label: o[1], style: toggle(o[0] === (cta.bg || 'red')), onPick: () => this.setCta({ bg: o[0] })
+      })),
+      ctaFrameOpts: [['white', 'White'], ['red', 'Red'], ['ink', 'Ink']].map(o => ({
+        label: o[1], style: toggle(o[0] === (cta.frame || 'white')), onPick: () => this.setCta({ frame: o[0] })
+      })),
+      ctaHeadline: cta.headline || '',
+      onCtaHeadline: (e) => this.setCta({ headline: e.target.value }),
+      ctaSub: cta.sub || '',
+      onCtaSub: (e) => this.setCta({ sub: e.target.value }),
+      ctaSize: Number(cta.size) || 104,
+      ctaSizeLabel: (Number(cta.size) || 104) + 'px',
+      onCtaSize: (e) => this.setCta({ size: Number(e.target.value) }),
+      ctaTextY: Number(cta.textY) || 28,
+      ctaTextYLabel: (Number(cta.textY) || 28) + '%',
+      onCtaTextY: (e) => this.setCta({ textY: Number(e.target.value) }),
+      ctaRadius: Number(cta.radius) || 0,
+      ctaRadiusLabel: (Number(cta.radius) || 0) + 'px',
+      onCtaRadius: (e) => this.setCta({ radius: Number(e.target.value) }),
+      ctaImgSize: Number(cta.imgSize) || 58,
+      ctaImgSizeLabel: (Number(cta.imgSize) || 58) + '%',
+      onCtaImgSize: (e) => this.setCta({ imgSize: Number(e.target.value) }),
+      ctaImgY: Number(cta.imgY) || 62,
+      ctaImgYLabel: (Number(cta.imgY) || 62) + '%',
+      onCtaImgY: (e) => this.setCta({ imgY: Number(e.target.value) }),
+      ctaHasImg: !!cta.image,
+      onCtaImgClear: () => this.setCta({ image: null }),
+      onCtaImgDrop: (e) => { e.preventDefault(); this.readCtaImg(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]); },
+      onCtaImgFile: (e) => this.readCtaImg(e.target.files && e.target.files[0]),
+      onReelScrub: (e) => {
+        const ms = Number(e.target.value);
+        this.setState({ reelT: ms }, () => {
+          const v = this._video;
+          if (v) { try { v.currentTime = ms / 1000; } catch (er) {} }
+          else this.drawReel();
+        });
+      },
+      reelTimeLabel: fmtT(this.state.reelT / 1000) + ' / ' + fmtT(total) + (cta.on ? ' (incl. CTA)' : ''),
+      onExportReel: () => this.exportReel(),
+      reelNote: 'Preview is scaled down; export records the full 1080x1920 canvas at the source video\u2019s own frame rate (auto-detected when you load it, up to 60 fps) and top bitrate, with its audio, in real time. Chrome and Edge save true MP4; other browsers fall back to WebM.'
+    };
+  }
+
+  productFromIdx(i) {
+    const p = this.PRODUCTS[i] || this.PRODUCTS[0];
+    const h = this.HANDLES[i] || this.HANDLES[0];
+    return { handle: h, label: p.label, title: p.title, price: p.price, eyebrow: p.eyebrow, badge: p.badge, images: [this.CDN + p.img] };
+  }
+
+  parseCatalogMd(md) {
+    const out = [];
+    const blocks = md.split('\n### ').slice(1);
+    for (const b of blocks) {
+      const label = b.split('\n')[0].trim();
+      const url = (b.match(/- URL: (\S+)/) || [])[1] || '';
+      const img = (b.match(/- Image: (\S+)/) || [])[1] || '';
+      const priceM = b.match(/- Price: AUD \$([\d.]+)/);
+      const tagsM = b.match(/- Tags: (.+)/);
+      if (!img || url.indexOf('/products/') < 0) continue;
+      out.push({
+        handle: url.split('/products/')[1].trim(),
+        label,
+        title: label.toUpperCase(),
+        price: priceM ? '$' + Number(priceM[1]).toFixed(2) : '',
+        eyebrow: tagsM ? tagsM[1].split(',')[0].trim().toLowerCase() : 'made in melbourne',
+        badge: b.indexOf('Top Seller') >= 0 || b.indexOf('top-seller') >= 0 ? 'BEST SELLER' : '',
+        images: [img]
+      });
+    }
+    return out;
+  }
+
+  async loadCatalog() {
+    let list = null;
+    try {
+      const r = await fetch('https://3dfilmparts.com/products.json?limit=250');
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.products && j.products.length) {
+          list = j.products.map(p => {
+            const tags = Array.isArray(p.tags) ? p.tags : String(p.tags || '').split(',');
+            const imgs = (p.images || []).map(im => im && im.src ? im.src : null).filter(Boolean);
+            return {
+              handle: p.handle,
+              label: p.title,
+              title: String(p.title).toUpperCase(),
+              price: p.variants && p.variants[0] && p.variants[0].price ? '$' + Number(p.variants[0].price).toFixed(2) : '',
+              eyebrow: String(p.product_type || tags[0] || 'made in melbourne').trim().toLowerCase() || 'made in melbourne',
+              badge: tags.join(',').toLowerCase().indexOf('top-seller') >= 0 ? 'BEST SELLER' : '',
+              images: imgs
+            };
+          }).filter(p => p.images.length);
+          if (!list.length) list = null;
+        }
+      }
+    } catch (e) { /* CORS or offline */ }
+    if (!list) {
+      try {
+        const md = await fetch('clore-templates/preview-assets/product-catalog.md').then(r => r.text());
+        list = this.parseCatalogMd(md);
+      } catch (e) { /* keep null */ }
+    }
+    if (!list || !list.length) list = this.PRODUCTS.map((p, i) => this.productFromIdx(i));
+    const pi = Object.assign({}, this.state.productImages);
+    list.forEach(p => { if (p.images.length > 1 && !pi[p.handle]) pi[p.handle] = p.images; });
+    this.setState({ catalog: list, productImages: pi });
+  }
+
+  FILES = [
+    { file: 'T02-editorial.html', name: 'T02 Editorial', logo: 'ink', img2: false, hasImg: true },
+    { file: 'T05A-editorial-light.html', name: 'T05A Editorial Light', logo: 'ink', img2: false, hasImg: true },
+    { file: 'T05B-editorial-dark.html', name: 'T05B Editorial Dark', logo: 'white', img2: false, hasImg: true },
+    { file: 'T10-dualsplit.html', name: 'T10 Dual Split', logo: 'ink', img2: 'Second angle (IMAGE2)', hasImg: true },
+    { file: 'T11-herodetail.html', name: 'T11 Hero Detail', logo: 'ink', img2: 'Detail inset (IMAGE2)', hasImg: true },
+    { file: 'T12-campaign.html', name: 'T12 Campaign (free text)', logo: 'white', img2: false, hasImg: false },
+    { file: 'T13-cameratape.html', name: 'T13 Camera Tape', logo: 'ink', img2: false, hasImg: true }
+  ];
+
+  FORMATS = [
+    { f: 'square', short: 'Square', label: 'square 1080x1080', w: 1080, h: 1080 },
+    { f: 'portrait', short: 'Portrait', label: 'portrait 1080x1350', w: 1080, h: 1350 },
+    { f: 'story', short: 'Story', label: 'story 1080x1920', w: 1080, h: 1920 },
+    { f: 'webbanner', short: 'Web banner', label: 'webbanner 1600x600', w: 1600, h: 600 },
+    { f: 'emailbanner', short: 'Email', label: 'emailbanner 1200x400', w: 1200, h: 400 }
+  ];
+
+  CDN = 'https://cdn.shopify.com/s/files/1/0812/6473/8557/files/';
+
+  HANDLES = [
+    'dji-ronin-4d-flexible-monitor-hood',
+    'sony-fx6-flexible-monitor-hood',
+    'sony-fx3-flexible-monitor-hood',
+    'sony-fx6-fx3-flexible-monitor-hood-combo',
+    'canon-c400-flexible-monitor-hood-mk2',
+    'canon-c300-mkiii-flexible-monitor-hood',
+    'dji-ronin-4d-cold-shoe-mount',
+    'dji-ronin-4d-tilta-top-handle-cold-shoe-mount',
+    'dji-prossd-active-cooling-box',
+    'dji-ronin-4d-lidar-rail-block',
+    '12mm-to-15mm-rod-sleeve-for-dji-ronin',
+    'ac-modular-front-box',
+    'boom-box-premium-grade-tool-box',
+    'film-cart-wheel-chock',
+    'c-stand-double-holder-for-film-carts-pair',
+    'ronin-dock-pro-for-inovativ-carts'
+  ];
+
+  async loadImagesFor(prod) {
+    const handle = prod.handle;
+    if (this.state.productImages[handle]) return this.state.productImages[handle];
+    let urls = prod.images && prod.images.length ? prod.images.slice() : [this.CDN + this.PRODUCTS[0].img];
+    try {
+      const r = await fetch('https://3dfilmparts.com/products/' + handle + '.js');
+      if (r.ok) {
+        const j = await r.json();
+        if (j && j.images && j.images.length) {
+          const mapped = j.images.map(u => (typeof u === 'string' && u.indexOf('//') === 0) ? 'https:' + u : u).filter(u => typeof u === 'string');
+          if (mapped.length) urls = mapped;
+        }
+      }
+    } catch (e) { /* CORS or network, fall back to catalog image */ }
+    this.setState({ productImages: Object.assign({}, this.state.productImages, { [handle]: urls }) });
+    return urls;
+  }
+
+  PRODUCTS = [
+    { label: 'DJI Ronin 4D Flexible Monitor Hood', title: 'DJI RONIN 4D FLEXIBLE MONITOR HOOD', price: '$79.00', eyebrow: 'DJI RONIN 4D', badge: 'BEST SELLER', img: 'QZTGJZ6BLI4CR3BGP4BGQFRJ.webp' },
+    { label: 'Sony FX6 Flexible Monitor Hood', title: 'SONY FX6 FLEXIBLE MONITOR HOOD', price: '$45.00', eyebrow: 'flexible by design', badge: 'NEW IN', img: 'CUK5JN4LQ5VVS3PFCHLLWZIZ.webp' },
+    { label: 'Sony FX3 Flexible Monitor Hood', title: 'SONY FX3 FLEXIBLE MONITOR HOOD', price: '$25.00', eyebrow: 'flexible by design', badge: '', img: '2SP2VW37BDPMQGRA7DCRPRF4.webp' },
+    { label: 'FX6 and FX3 Monitor Hood Combo', title: 'SONY FX6 AND FX3 MONITOR HOOD COMBO', price: '$69.00', eyebrow: 'fits the fx6 and fx3', badge: 'TWO ANGLES', img: 'P5OWUA6IA5ZHAGUI3MQ4M7J6_15b39ae8-c111-4a53-bdf6-179b59370275.webp' },
+    { label: 'Canon C400 Monitor Hood MK2', title: 'CANON C400 FLEXIBLE MONITOR HOOD MK2', price: '$59.00', eyebrow: 'back in stock', badge: 'JUST DROPPED', img: '3LAZOY2MAJW2RV7N4NU2ISTA.webp' },
+    { label: 'Canon C300 MKIII Monitor Hood', title: 'CANON C300 MKIII FLEXIBLE MONITOR HOOD', price: '$49.00', eyebrow: 'fits the canon c300 mk3', badge: '', img: 'CanonC300MKIIIHood-6.jpg' },
+    { label: 'Ronin 4D Cold Shoe Mount', title: 'DJI RONIN 4D COLD SHOE MOUNT', price: '$35.00', eyebrow: 'fits the ronin 4d', badge: '', img: 'G3ZRMY3QP2YI7N6RJYDCXDVH.webp' },
+    { label: 'Tilta Top Handle Cold Shoe Mount', title: 'TILTA HANDLE SHOE MOUNT', price: '$35.00', eyebrow: 'new to the store', badge: 'NEW IN', img: 'DJI-RD4-TILTA-SHOE-MOUNT-4.jpg' },
+    { label: 'DJI ProSSD Active Cooling Box', title: 'DJI PROSSD ACTIVE COOLING BOX', price: '$99.00', eyebrow: 'fits the dji prossd', badge: 'SELLING FAST', img: 'IKNLCE73MFQMO25DQSX45YDR.webp' },
+    { label: 'Ronin 4D Lidar Rail Block', title: 'DJI RONIN 4D LIDAR RAIL BLOCK', price: '$48.00', eyebrow: 'fits the lidar rail', badge: '', img: 'DJIR4DLIDARRAILBLOCK-30.jpg' },
+    { label: '12mm to 15mm Rod Sleeve', title: '12MM TO 15MM ROD SLEEVE FOR DJI RONIN', price: '$2.00', eyebrow: 'RONIN 4D', badge: 'BEST SELLER', img: '12-15mmRodAdapter-3.jpg' },
+    { label: 'AC Modular Front Box', title: 'AC MODULAR FRONT BOX', price: '$199.00', eyebrow: 'made in melbourne', badge: 'BEST SELLER', img: 'WJFV2BVXHCZCV2VDXYD5CYA4_73cee6ff-f826-48e8-a231-4763e8a9b6a6.webp' },
+    { label: 'Boom Box Premium AC Front Box', title: 'BOOM BOX PREMIUM AC FRONT BOX', price: '$299.00', eyebrow: 'made in melbourne', badge: '', img: 'AC_Front_box_premium-18.jpg' },
+    { label: 'Film Cart Wheel Chock', title: 'FILM CART WHEEL CHOCK', price: '$89.00', eyebrow: 'fits 8 and 10 inch wheels', badge: 'BEST SELLER', img: 'KWCV4G7WITJLNUCBLGF7Q7RB.webp' },
+    { label: 'C-Stand Double Holder (Pair)', title: 'C-STAND DOUBLE HOLDER FOR FILM CARTS', price: '$65.00', eyebrow: 'fits most film carts', badge: 'BEST SELLER', img: '7A5LRYKWVUMVU3F22ETSJVFH.webp' },
+    { label: 'Ronin Dock Pro for Inovativ', title: 'RONIN DOCK PRO FOR INOVATIV CARTS', price: '$159.00', eyebrow: 'fits inovativ carts', badge: '', img: 'U42XIJM7YDK6KGCB3FLE7JMI.webp' }
+  ];
+
+  defaults(file) {
+    const p = this.PRODUCTS[0];
+    const d = {
+      format: file === 'T12-campaign.html' ? 'story' : 'square',
+      title: p.title, eyebrow: p.eyebrow, price: p.price, badge: 'NEW PRODUCT',
+      priceOn: true, badgeOn: true, productIdx: 0,
+      img1: this.CDN + p.img, img2: this.CDN + this.PRODUCTS[1].img,
+      custom1: null, custom2: null, scale1: 1, scale2: 1,
+      posX1: 50, posY1: 50, posX2: 50, posY2: 50, titleScale: 1
+    };
+    if (file === 'T10-dualsplit.html') {
+      const c = this.PRODUCTS[3];
+      Object.assign(d, { title: c.title, eyebrow: c.eyebrow, price: c.price, badge: 'NEW PRODUCT', productIdx: 3, img1: this.CDN + this.PRODUCTS[1].img, img2: this.CDN + this.PRODUCTS[2].img });
+    }
+    if (file === 'T11-herodetail.html') d.badge = 'NEW PRODUCT';
+    if (file === 'T12-campaign.html') Object.assign(d, { title: 'ALL OF IT.', eyebrow: 'EVERY SINGLE PRODUCT', badge: 'CODE EOFY15', price: '', priceOn: false });
+    return d;
+  }
+
+  cur() {
+    const m = Object.assign(this.defaults(this.state.active), this.state.settings[this.state.active] || {});
+    if (!m.product) m.product = this.productFromIdx(m.productIdx || 0);
+    return m;
+  }
+
+  upd(patch) {
+    const active = this.state.active;
+    const next = Object.assign({}, this.state.settings, { [active]: Object.assign(this.cur(), patch) });
+    this.setState({ settings: next }, () => {
+      this.persist();
+      if (this.state.mode === 'anim') this.ensureLayers();
+    });
+  }
+
+  persist() {
+    try {
+      const slim = {};
+      for (const k of Object.keys(this.state.settings)) {
+        slim[k] = Object.assign({}, this.state.settings[k]);
+        if (slim[k].custom1 && slim[k].custom1.length > 400000) slim[k] = Object.assign({}, slim[k], { custom1: null });
+        if (slim[k].custom2 && slim[k].custom2.length > 400000) slim[k] = Object.assign({}, slim[k], { custom2: null });
+      }
+      const slimQueue = this.state.queue.map(q => {
+        const c = Object.assign({}, q, { settings: Object.assign({}, q.settings) });
+        if (c.settings.custom1 && c.settings.custom1.length > 400000) c.settings.custom1 = null;
+        if (c.settings.custom2 && c.settings.custom2.length > 400000) c.settings.custom2 = null;
+        return c;
+      });
+      localStorage.setItem('clore-studio-editor-v1', JSON.stringify({ active: this.state.active, settings: slim, queue: slimQueue, anim: this.state.anim, presets: this.state.presets,
+        reel: (() => {
+          const rr = JSON.parse(JSON.stringify(this.state.reel));
+          if (rr.cta && rr.cta.image && rr.cta.image.length > 400000) rr.cta.image = null;
+          return rr;
+        })() }));
+    } catch (e) { /* quota, keep in memory */ }
+  }
+
+  async componentDidMount() {
+    try {
+      const saved = localStorage.getItem('clore-studio-editor-v1');
+      if (saved) {
+        const s = JSON.parse(saved);
+        if (s && s.settings) this.setState({
+          settings: s.settings, active: s.active || this.state.active,
+          queue: Array.isArray(s.queue) ? s.queue : [],
+          anim: s.anim ? Object.assign({}, this.state.anim, s.anim) : this.state.anim,
+          presets: Array.isArray(s.presets) ? s.presets : [],
+          reel: s.reel ? Object.assign({}, this.state.reel, s.reel, {
+            elements: Object.assign({}, this.state.reel.elements, s.reel.elements || {}),
+            cta: Object.assign({}, this.state.reel.cta, s.reel.cta || {}),
+            badge: Object.assign({}, this.state.reel.badge, s.reel.badge || {})
+          }) : this.state.reel
+        });
+      }
+    } catch (e) { /* ignore */ }
+    try {
+      const base = 'clore-templates/';
+      const names = this.FILES.map(f => f.file);
+      const [tokens, ...texts] = await Promise.all(
+        [base + 'tokens.css', ...names.map(f => base + f)].map(u => fetch(u).then(r => {
+          if (!r.ok) throw new Error('Failed to load ' + u);
+          return r.text();
+        }).catch(e => {
+          const a = window.CLORE_ASSETS && window.CLORE_ASSETS[u];
+          if (typeof a === 'string') return a;
+          throw e;
+        }))
+      );
+      const raw = {};
+      names.forEach((f, i) => { raw[f] = texts[i]; });
+      this.setState({ raw, tokens });
+    } catch (e) {
+      this.setState({ error: String(e) });
+    }
+    this.loadCatalog();
+    this.loadImagesFor(this.cur().product);
+    this.loadPresetFile();
+  }
+
+  readDrop(patchKey) {
+    return (e) => {
+      e.preventDefault();
+      const file = (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) ||
+                   (e.target && e.target.files && e.target.files[0]);
+      if (!file || !file.type || file.type.indexOf('image') !== 0) return;
+      const reader = new FileReader();
+      reader.onload = () => this.upd({ [patchKey]: reader.result });
+      reader.readAsDataURL(file);
+    };
+  }
+
+  buildSrcdoc(file, s, format) {
+    const def = this.FILES.find(f => f.file === file);
+    let html = this.state.raw[file].replace(/<link rel="stylesheet"[^>]*>/g, '');
+    const zoom = '<style>.hero, .photo-card img, .img1 { transform: scale(' + s.scale1 +
+      '); object-position: ' + s.posX1 + '% ' + s.posY1 + '%; } .img2 { transform: scale(' + s.scale2 +
+      '); object-position: ' + s.posX2 + '% ' + s.posY2 + '%; } h1 { zoom: ' + (s.titleScale ?? 1) + '; }</style>';
+    html = html.replace('<head>',
+      '<head><base href="clore-templates/"><link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" crossorigin="anonymous"><style>' +
+      this.state.tokens + '</style>' + zoom);
+    const tapeKey = s.tapeBg || 'frame-h';
+    let logoKind = def.logo;
+    if (file === 'T13-cameratape.html' && (tapeKey === 'frame-b' || tapeKey === 'frame-g')) logoKind = 'white';
+    if (s.logoColor === 'ink' || s.logoColor === 'white') logoKind = s.logoColor;
+    const logo = this.assetUrl('clore-templates/preview-assets/logo-' + logoKind + '-transparent.png');
+    const fills = {
+      TAPEBG: this.assetUrl('clore-templates/reel-frames/' + tapeKey + '.png'),
+      FORMAT: format,
+      TITLE: s.title, EYEBROW: s.eyebrow,
+      PRICE: s.priceOn ? s.price : '',
+      BADGE: s.badgeOn ? s.badge : '',
+      IMAGE: s.custom1 || s.img1,
+      IMAGE2: s.custom2 || s.img2,
+      LOGO: logo
+    };
+    for (const key of Object.keys(fills)) {
+      html = html.split('{{' + key + '}}').join(fills[key]);
+    }
+    return html;
+  }
+
+  renderVals() {
+    const s = this.cur();
+    const active = this.state.active;
+    const def = this.FILES.find(f => f.file === active);
+    const loaded = !!this.state.raw;
+
+    const btn = (on) => ({
+      fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 11,
+      letterSpacing: '0.1em', textTransform: 'uppercase', textAlign: 'left',
+      padding: '10px 12px', cursor: 'pointer',
+      border: on ? '2px solid #E8231F' : '2px solid #D3CFC3',
+      background: on ? '#E8231F' : '#fff', color: on ? '#fff' : '#141414'
+    });
+    const toggle = (on) => Object.assign(btn(on), { textAlign: 'center', flex: '0 0 auto', padding: '10px 14px' });
+
+    const templates = this.FILES.map(f => ({
+      name: f.name, file: f.file, style: btn(f.file === active),
+      onSelect: () => this.setState({ active: f.file }, () => {
+        this.persist();
+        this.loadImagesFor(this.cur().product);
+      })
+    }));
+
+    const formats = this.FORMATS.map(fm => ({
+      short: fm.short, style: toggle(fm.f === s.format),
+      onSelect: () => this.upd({ format: fm.f })
+    }));
+
+    const prod = s.product;
+    const imgs = (this.state.productImages[prod.handle] || prod.images || []).slice(0, 12);
+    const thumb = (src, activeSrc, key) => ({
+      style: {
+        width: 44, height: 44, cursor: 'pointer',
+        backgroundImage: 'url("' + src + '")',
+        backgroundSize: 'cover', backgroundPosition: 'center',
+        border: src === activeSrc ? '3px solid #E8231F' : '2px solid #D3CFC3',
+        boxSizing: 'border-box'
+      },
+      onPick: () => this.upd({ [key]: src, [key === 'img1' ? 'custom1' : 'custom2']: null })
+    });
+
+    const step1 = (dir) => {
+      const curSrc = s.custom1 || s.img1;
+      let i = imgs.indexOf(curSrc);
+      i = i < 0 ? 0 : (i + dir + imgs.length) % imgs.length;
+      this.upd({ img1: imgs[i], custom1: null });
+    };
+
+    const fmt = this.FORMATS.find(f => f.f === s.format);
+    const fit = Math.min(1100 / fmt.w, 700 / fmt.h, 0.62);
+    const wrap = (w, h, sc, extra) => Object.assign({
+      width: Math.round(w * sc), height: Math.round(h * sc), overflow: 'hidden',
+      position: 'relative', flex: '0 0 auto', background: '#fff',
+      boxShadow: '0 22px 48px rgba(20,20,20,.22)'
+    }, extra || {});
+    const frame = (w, h, sc) => ({
+      width: w, height: h, border: 0, transform: 'scale(' + sc + ')',
+      transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, pointerEvents: 'none'
+    });
+
+    let main = false, minis = [];
+    if (loaded && !this.state.error) {
+      main = {
+        srcdoc: this.buildSrcdoc(active, s, s.format),
+        wrapStyle: wrap(fmt.w, fmt.h, fit),
+        frameStyle: frame(fmt.w, fmt.h, fit)
+      };
+      minis = this.FORMATS.map(fm => ({
+        label: fm.short,
+        srcdoc: this.buildSrcdoc(active, s, fm.f),
+        wrapStyle: wrap(fm.w, fm.h, 0.075, fm.f === s.format ? { outline: '3px solid #E8231F', outlineOffset: 2 } : {}),
+        frameStyle: frame(fm.w, fm.h, 0.075),
+        labelStyle: {
+          fontFamily: "'JetBrains Mono', monospace", fontWeight: fm.f === s.format ? 700 : 400,
+          fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
+          color: fm.f === s.format ? '#E8231F' : '#8A8A86'
+        },
+        onSelect: () => this.upd({ format: fm.f })
+      }));
+    }
+
+    return {
+      error: this.state.error,
+      templates, formats,
+      productQuery: this.state.productQuery,
+      onProductQuery: (e) => this.setState({ productQuery: e.target.value }),
+      productResults: (() => {
+        const catalog = this.state.catalog || this.PRODUCTS.map((p, i) => this.productFromIdx(i));
+        const q = this.state.productQuery.trim().toLowerCase();
+        const matches = q ? catalog.filter(p => p.label.toLowerCase().indexOf(q) >= 0) : catalog;
+        return matches.slice(0, 60).map(p => ({
+          label: p.label,
+          style: {
+            fontFamily: "'JetBrains Mono', monospace", fontSize: 11, textAlign: 'left',
+            padding: '8px 10px', cursor: 'pointer', border: 0,
+            background: p.handle === prod.handle ? '#E8231F' : 'transparent',
+            color: p.handle === prod.handle ? '#fff' : '#141414',
+            fontWeight: p.handle === prod.handle ? 700 : 400
+          },
+          onSelect: () => {
+            this.upd({
+              product: p, title: p.title, eyebrow: p.eyebrow, price: p.price,
+              badge: p.badge || this.cur().badge,
+              img1: p.images[0], img2: p.images[1] || p.images[0],
+              custom1: null, custom2: null,
+              scale1: 1, scale2: 1, posX1: 50, posY1: 50, posX2: 50, posY2: 50
+            });
+            this.loadImagesFor(p).then(urls => {
+              if (urls && urls.length && this.cur().product.handle === p.handle) {
+                this.upd({ img1: urls[0], img2: urls[1] || urls[0] });
+              }
+            });
+          }
+        }));
+      })(),
+      productCount: (() => {
+        const catalog = this.state.catalog;
+        if (!catalog) return 'Loading catalogue...';
+        const q = this.state.productQuery.trim().toLowerCase();
+        const n = q ? catalog.filter(p => p.label.toLowerCase().indexOf(q) >= 0).length : catalog.length;
+        return n + ' product' + (n === 1 ? '' : 's') + '.';
+      })(),
+      title: s.title, eyebrow: s.eyebrow, price: s.price, badge: s.badge,
+      onTitle: (e) => this.upd({ title: e.target.value }),
+      titleScale: s.titleScale ?? 1,
+      titleScaleLabel: (s.titleScale ?? 1).toFixed(2) + 'x',
+      onTitleScale: (e) => this.upd({ titleScale: Number(e.target.value) }),
+      onEyebrow: (e) => this.upd({ eyebrow: e.target.value }),
+      onPrice: (e) => this.upd({ price: e.target.value }),
+      onBadge: (e) => this.upd({ badge: e.target.value }),
+      priceToggleLabel: s.priceOn ? 'ON' : 'OFF',
+      badgeToggleLabel: s.badgeOn ? 'ON' : 'OFF',
+      priceToggleStyle: toggle(s.priceOn),
+      badgeToggleStyle: toggle(s.badgeOn),
+      onTogglePrice: () => this.upd({ priceOn: !s.priceOn }),
+      onToggleBadge: () => this.upd({ badgeOn: !s.badgeOn }),
+      hasImage1: def.hasImg,
+      hasImage2: !!def.img2,
+      image2Label: def.img2 || '',
+      thumbs1: imgs.map(src => thumb(src, s.custom1 ? '' : s.img1, 'img1')),
+      thumbs2: imgs.map(src => thumb(src, s.custom2 ? '' : s.img2, 'img2')),
+      onPrev1: () => step1(-1),
+      onNext1: () => step1(1),
+      onDragOver: (e) => e.preventDefault(),
+      onDrop1: this.readDrop('custom1'),
+      onDrop2: this.readDrop('custom2'),
+      onFile1: this.readDrop('custom1'),
+      onFile2: this.readDrop('custom2'),
+      hasCustom1: !!s.custom1,
+      hasCustom2: !!s.custom2,
+      onClearCustom1: () => this.upd({ custom1: null }),
+      onClearCustom2: () => this.upd({ custom2: null }),
+      scale1: s.scale1, scale2: s.scale2,
+      scale1Label: s.scale1.toFixed(2) + 'x',
+      scale2Label: s.scale2.toFixed(2) + 'x',
+      onScale1: (e) => this.upd({ scale1: Number(e.target.value) }),
+      onScale2: (e) => this.upd({ scale2: Number(e.target.value) }),
+      posX1: s.posX1, posY1: s.posY1, posX2: s.posX2, posY2: s.posY2,
+      posX1Label: s.posX1 + '%', posY1Label: s.posY1 + '%',
+      posX2Label: s.posX2 + '%', posY2Label: s.posY2 + '%',
+      onPosX1: (e) => this.upd({ posX1: Number(e.target.value) }),
+      onPosY1: (e) => this.upd({ posY1: Number(e.target.value) }),
+      onPosX2: (e) => this.upd({ posX2: Number(e.target.value) }),
+      onPosY2: (e) => this.upd({ posY2: Number(e.target.value) }),
+      onReset: () => {
+        const next = Object.assign({}, this.state.settings);
+        delete next[active];
+        this.setState({ settings: next }, () => this.persist());
+      },
+      exportBtnStyle: {
+        fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 11,
+        letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 14px',
+        border: '2px solid #141414', background: '#141414', color: '#fff', cursor: 'pointer'
+      },
+      queueBtnStyle: {
+        fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 11,
+        letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 14px',
+        border: '2px solid #E8231F', background: '#E8231F', color: '#fff', cursor: 'pointer'
+      },
+      clearBtnStyle: {
+        fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, fontSize: 11,
+        letterSpacing: '0.1em', textTransform: 'uppercase', padding: '9px 14px',
+        border: '2px solid #D3CFC3', background: '#fff', color: '#54534F', cursor: 'pointer'
+      },
+      hqStyle: toggle(this.state.hq),
+      hqLabel: this.state.hq ? 'HQ 2X ON' : 'HQ 2X OFF',
+      onToggleHq: () => this.setState({ hq: !this.state.hq }),
+      exporting: this.state.exporting,
+      onExportPng: () => this.exportItems([{ file: active, settings: s, format: s.format }], 'png'),
+      onExportJpeg: () => this.exportItems([{ file: active, settings: s, format: s.format }], 'jpeg'),
+      onExportSvg: () => this.exportItems([{ file: active, settings: s, format: s.format }], 'svg'),
+      onQueueAdd: () => {
+        const item = {
+          id: Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+          file: active, format: s.format, settings: s
+        };
+        this.setState({ queue: this.state.queue.concat([item]) }, () => this.persist());
+      },
+      hasQueue: this.state.queue.length > 0,
+      queueCount: this.state.queue.length + ' item' + (this.state.queue.length === 1 ? '' : 's'),
+      queueItems: this.state.queue.map(q => ({
+        label: q.file.split('-')[0] + ' · ' + q.format + ' · ' + this.slug(q.settings.title).slice(0, 28),
+        onRemove: () => this.setState({ queue: this.state.queue.filter(x => x.id !== q.id) }, () => this.persist())
+      })),
+      onQueueClear: () => this.setState({ queue: [] }, () => this.persist()),
+      onExportAllPng: () => this.exportItems(this.state.queue, 'png'),
+      onExportAllJpeg: () => this.exportItems(this.state.queue, 'jpeg'),
+      onExportAllSvg: () => this.exportItems(this.state.queue, 'svg'),
+      presetName: this.state.presetName,
+      onPresetName: (e) => this.setState({ presetName: e.target.value }),
+      onSavePreset: () => this.savePreset(),
+      onExportPresets: () => this.exportPresets(),
+      onImportPresets: (e) => this.importPresets(e),
+      presetRows: this.state.presets.map(p => ({
+        name: p.name,
+        applyStyle: Object.assign(btn(false), { flex: '1 1 auto', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }),
+        onApply: () => this.applyPreset(p),
+        onRemove: () => this.setState({ presets: this.state.presets.filter(x => x.id !== p.id) }, () => this.persist())
+      })),
+      logoColorOpts: [['auto', 'Auto'], ['ink', 'Black'], ['white', 'White']].map(o => ({
+        label: o[1], style: toggle(o[0] === (s.logoColor || 'auto')), onPick: () => this.upd({ logoColor: o[0] })
+      })),
+      isTapeTpl: active === 'T13-cameratape.html',
+      tapeBgOpts: [['frame-b', 'Tape 1 · dark'], ['frame-f', 'Tape 2 · paper'], ['frame-g', 'Tape 3 · red'], ['frame-h', 'Tape 4 · airy'], ['frame-i', 'Tape 5 · border']].map(o => ({
+        label: o[1], style: toggle(o[0] === (s.tapeBg || 'frame-h')), onPick: () => this.upd({ tapeBg: o[0] })
+      })),
+      isDesign: this.state.mode === 'design',
+      isAnim: this.state.mode === 'anim',
+      isReel: this.state.mode === 'reel',
+      isNotReel: this.state.mode !== 'reel',
+      modeDesignStyle: toggle(this.state.mode === 'design'),
+      modeAnimStyle: toggle(this.state.mode === 'anim'),
+      modeReelStyle: toggle(this.state.mode === 'reel'),
+      isBatch: this.state.mode === 'batch',
+      modeBatchStyle: toggle(this.state.mode === 'batch'),
+      onModeBatch: () => {
+        if (this._raf) cancelAnimationFrame(this._raf);
+        this.stopReel();
+        this.setState({ mode: 'batch', animPlaying: false }, () => {
+          if (!(this.state.batch || []).length) this.shuffleBatch();
+        });
+      },
+      onShuffleBatch: () => this.shuffleBatch(),
+      onExportBatchPng: () => this.exportBatch('png'),
+      onExportBatchJpeg: () => this.exportBatch('jpeg'),
+      onExportBatchVideos: () => this.exportBatchVideos(),
+      onStopExport: () => this.stopExport(),
+      isExporting: !!this.state.exporting || !!this._recording,
+      batchRows: (this.state.mode === 'batch' && this.state.raw && !this.state.error ? (this.state.batch || []) : []).map(p => {
+        const si = this.batchSettings(p);
+        const bs = 0.155;
+        return {
+          label: p.label,
+          srcdoc: this.buildSrcdoc(active, si, si.format),
+          wrapStyle: {
+            width: Math.round(fmt.w * bs), height: Math.round(fmt.h * bs),
+            overflow: 'hidden', position: 'relative', flex: '0 0 auto', background: '#fff',
+            boxShadow: '0 12px 28px rgba(20,20,20,.18)'
+          },
+          frameStyle: {
+            width: fmt.w, height: fmt.h, border: 0, transform: 'scale(' + bs + ')',
+            transformOrigin: 'top left', position: 'absolute', top: 0, left: 0, pointerEvents: 'none'
+          }
+        };
+      }),
+      onModeDesign: () => {
+        if (this._raf) cancelAnimationFrame(this._raf);
+        this.stopReel();
+        this.setState({ mode: 'design', animPlaying: false });
+      },
+      onModeAnim: () => { this.stopReel(); this.setState({ mode: 'anim' }, () => this.ensureLayers()); },
+      onModeReel: () => {
+        if (this._raf) cancelAnimationFrame(this._raf);
+        this.setState({ mode: 'reel', animPlaying: false }, () => {
+          this.ensureReelAssets();
+          setTimeout(() => this.drawReel(), 50);
+        });
+      },
+      ...this.reelVals(toggle, btn),
+      textEffectOpts: [['none', 'None'], ['fade', 'Fade'], ['rise', 'Rise'], ['slide', 'Slide'], ['scale', 'Scale']].map(o => ({
+        label: o[1], style: toggle(o[0] === this.state.anim.textEffect), onPick: () => this.setAnim({ textEffect: o[0] })
+      })),
+      easingOpts: [['smooth', 'Smooth'], ['snappy', 'Snappy'], ['overshoot', 'Overshoot'], ['linear', 'Linear']].map(o => ({
+        label: o[1], style: toggle(o[0] === this.state.anim.easing), onPick: () => this.setAnim({ easing: o[0] })
+      })),
+      imageEntranceOpts: [['none', 'None'], ['fade', 'Fade'], ['scale', 'Scale'], ['slide', 'Slide']].map(o => ({
+        label: o[1], style: toggle(o[0] === this.state.anim.imageEntrance), onPick: () => this.setAnim({ imageEntrance: o[0] })
+      })),
+      transitionOpts: [['cut', 'Cut'], ['fade', 'Crossfade'], ['slide', 'Slide'], ['zoom', 'Zoom']].map(o => ({
+        label: o[1], style: toggle(o[0] === this.state.anim.transition), onPick: () => this.setAnim({ transition: o[0] })
+      })),
+      textDur: this.state.anim.textDuration,
+      textDurLabel: this.state.anim.textDuration.toFixed(2) + 's',
+      onTextDur: (e) => this.setAnim({ textDuration: Number(e.target.value) }),
+      textStagger: this.state.anim.textStagger,
+      textStaggerLabel: this.state.anim.textStagger.toFixed(2) + 's',
+      onTextStagger: (e) => this.setAnim({ textStagger: Number(e.target.value) }),
+      textDelay: this.state.anim.textDelay,
+      textDelayLabel: this.state.anim.textDelay.toFixed(2) + 's',
+      onTextDelay: (e) => this.setAnim({ textDelay: Number(e.target.value) }),
+      animHasImages: !!this.RECIPES[active].imgBox,
+      imageCount: this.state.anim.imageCount,
+      imageCountLabel: String(this.state.anim.imageCount),
+      onImageCount: (e) => this.setAnim({ imageCount: Number(e.target.value) }),
+      hold: this.state.anim.hold,
+      holdLabel: this.state.anim.hold.toFixed(1) + 's',
+      onHold: (e) => this.setAnim({ hold: Number(e.target.value) }),
+      transDur: this.state.anim.transDuration,
+      transDurLabel: this.state.anim.transDuration.toFixed(2) + 's',
+      onTransDur: (e) => this.setAnim({ transDuration: Number(e.target.value) }),
+      kbStyle: toggle(this.state.anim.kenburns),
+      kbLabel: this.state.anim.kenburns ? 'ON' : 'OFF',
+      onToggleKb: () => this.setAnim({ kenburns: !this.state.anim.kenburns }),
+      kbAmount: this.state.anim.kbAmount,
+      kbAmountLabel: '+' + Math.round(this.state.anim.kbAmount * 100) + '%',
+      onKbAmount: (e) => this.setAnim({ kbAmount: Number(e.target.value) }),
+      loopStyle: toggle(this.state.anim.loop),
+      loopLabel: this.state.anim.loop ? 'LOOP ON' : 'LOOP OFF',
+      onToggleLoop: () => this.setAnim({ loop: !this.state.anim.loop }),
+      onRebuild: () => { this._builtKey = ''; this.ensureLayers(); },
+      noLayers: !this.state.animLayers || !this.state.animLayers.texts.length,
+      layerRows: (this.state.animLayers ? this.state.animLayers.texts : []).map(tl => {
+        const cfg = this.layerCfg(tl.sel);
+        const on = cfg.visible !== false;
+        return {
+          name: tl.name,
+          toggleStyle: toggle(on),
+          toggleLabel: on ? 'ON' : 'OFF',
+          onToggle: () => this.setLayerCfg(tl.sel, { visible: !on }),
+          effect: cfg.effect || 'global',
+          onEffect: (e) => this.setLayerCfg(tl.sel, { effect: e.target.value }),
+          delay: cfg.delay || 0,
+          delayLabel: (cfg.delay || 0).toFixed(2) + 's',
+          onDelay: (e) => this.setLayerCfg(tl.sel, { delay: Number(e.target.value) })
+        };
+      }),
+      canvasRef: this.canvasRef,
+      stageWrapStyle: (() => {
+        const Ld = this.state.animLayers;
+        const sw = Ld ? Ld.w : fmt.w, sh = Ld ? Ld.h : fmt.h;
+        return wrap(sw, sh, Math.min(1100 / sw, 700 / sh, 0.62));
+      })(),
+      canvasStyle: { width: '100%', height: '100%', display: 'block' },
+      animStatus: this.state.animStatus,
+      animT: this.state.animT,
+      animTotalMs: Math.round(this.animTotal()),
+      animTimeLabel: (this.state.animT / 1000).toFixed(1) + 's / ' + (this.animTotal() / 1000).toFixed(1) + 's',
+      onScrub: (e) => {
+        const t = Number(e.target.value);
+        this._t = t;
+        this._playStart = performance.now() - t;
+        this.setState({ animT: t });
+        this.drawFrame(t);
+      },
+      playLabel: this.state.animPlaying ? 'Pause' : 'Play',
+      onPlayPause: () => {
+        if (this.state.animPlaying) {
+          if (this._raf) cancelAnimationFrame(this._raf);
+          this.setState({ animPlaying: false });
+        } else {
+          this.setState({ animPlaying: true }, () => this.startPlay());
+        }
+      },
+      onRestart: () => {
+        this._t = 0;
+        this.setState({ animT: 0, animPlaying: true }, () => this.startPlay());
+      },
+      onExportVideo: () => { this._cancelExport = false; this.exportVideo(); },
+      videoNote: 'Records in real time at 30 fps at full production resolution. Chrome and Edge save MP4; other browsers fall back to WebM. Layers rebuild automatically when the design changes; use Rebuild layers if something looks stale.',
+      mainTitle: this.state.mode === 'reel' ? 'REEL MAKER' : def.name,
+      mainLabel: this.state.mode === 'reel' ? ('story 1080x1920 · ' + (this._fps ? this._fps + ' fps (source)' : 'fps matches source')) : fmt.label,
+      logoNote: this.state.mode === 'reel' ? this.reelSkinNote() : (def.logo === 'ink' ? 'ink logo (light ground)' : 'white logo (dark ground)'),
+      main, minis
+    };
+  }
+}
+</script>
+</body>
+</html>
