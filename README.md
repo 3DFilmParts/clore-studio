@@ -29,6 +29,17 @@ on-brand product marketing assets from the live Shopify catalogue across four wo
 - These features live in the deployed bundle (`index.html` / standalone HTML); the
   `.dc.html` source reference predates them.
 
+### v1.2 additions (mobile app)
+- **Responsive mobile layout** — below 820px the app stacks (stage first, controls below) with a
+  fixed bottom tab bar (Post / Design / Anim / Batch / Reel) and previews that fit the screen.
+- **Installable PWA** — `manifest.webmanifest`, `sw.js` (network-first, offline fallback), branded
+  icons. Add to Home Screen on iPhone/Android launches it fullscreen like a native app and it
+  keeps working offline after first load.
+- **Quick Post mode** — phone-first flow: horizontal product strip → swipeable template styles →
+  format chips → live preview → **Share image / Share carousel** via the native share sheet
+  (`navigator.share` with files, straight into Instagram; caption + hashtags auto-copied to the
+  clipboard on tap). Falls back to file downloads in browsers without a share sheet.
+
 ## About the files in this bundle
 
 | File | What it is |
