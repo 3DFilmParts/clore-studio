@@ -17,6 +17,18 @@ on-brand product marketing assets from the live Shopify catalogue across four wo
    overlays, animated badge stickers, rolling timecode slate, progress bar, optional CTA end card,
    exports MP4 at the source video's own frame rate with audio.
 
+### v1.1 additions (Design workspace)
+- **Carousel builder** — a 5-slide Instagram story arc for the selected product
+  (hero → closer look → on set → angles → call to action), each slide on a different brand
+  template, portrait or square, with image shuffle. Exports numbered `01–05` PNG/JPEG files at
+  production size, ready to upload in order.
+- **Caption + hashtag generator** — ready-to-paste caption built from the live product data
+  (hook line, store description when available, price + product URL, CTA) with a rotating
+  "New angle" variant, plus a brand/camera-specific/niche hashtag set. One-click copy for
+  caption, hashtags, or both. Captions are editable in place.
+- These features live in the deployed bundle (`index.html` / standalone HTML); the
+  `.dc.html` source reference predates them.
+
 ## About the files in this bundle
 
 | File | What it is |
