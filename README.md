@@ -9,9 +9,13 @@ on-brand product marketing assets from the live Shopify catalogue across four wo
    webbanner 1600x600, emailbanner 1200x400). Includes a render queue and shareable presets.
 2. **Animation** — decomposes the current design into layers (logo, badge, eyebrow, headline,
    rule, price, CTA, product image cycle) and records animated MP4/WebM with per-layer effects,
-   easing, stagger, Ken Burns.
-3. **Batch** — deals 10 random catalogue products styled with the current template/format/preset;
-   one-click export of all 10 as PNG / JPEG / MP4 (sequential, with Stop button).
+   easing, stagger, Ken Burns. Optionally drop a video into the design's image slot: it plays
+   in place of the image cycle, the export runs for the whole clip, and the clip's audio is
+   recorded into the MP4 (preview stays muted; sound is audible while the export records).
+3. **Batch** — pick a product category to load every product in it, or deal 10 random catalogue
+   products, styled with the current template/format/preset; one-click export of the whole batch
+   as PNG / JPEG / MP4 (sequential, with Stop button). Categories come from the live catalogue's
+   product types, shown with counts; Shuffle re-deals within the selected category.
 4. **Reel** — vertical 1080x1920 video maker: drop in an edited phone video, choose from 13 brand
    skins (6 hand-drawn + 7 AI-generated frames incl. the Camera Tape 1–5 family), timed text
    overlays, animated badge stickers, rolling timecode slate, progress bar, optional CTA end card,
@@ -39,6 +43,15 @@ on-brand product marketing assets from the live Shopify catalogue across four wo
   format chips → live preview → **Share image / Share carousel** via the native share sheet
   (`navigator.share` with files, straight into Instagram; caption + hashtags auto-copied to the
   clipboard on tap). Falls back to file downloads in browsers without a share sheet.
+
+### v1.3 additions (Animation + Batch)
+- **Video in the Anim image slot** — upload a clip in the Animation sidebar; it plays inside the
+  design's image area instead of the image cycle, the MP4 export runs for the full clip length,
+  and the clip's audio track is captured into the export (same capture pipeline as the Reel
+  workspace). The video lives in the browser session only — re-select after a reload.
+- **Batch categories** — a category pill row (built live from the catalogue's product types, with
+  counts) above the Batch controls. Picking a category loads *every* product in it; Random 10
+  keeps the old shuffled deal; Shuffle re-deals/re-orders within the current selection.
 
 ## About the files in this bundle
 

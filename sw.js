@@ -1,7 +1,7 @@
 /* CLORE Studio service worker — network-first with cache fallback.
    Fresh deploys win when online; the whole app (single self-contained file)
    keeps working offline once visited. */
-const CACHE = 'clore-studio-v1';
+const CACHE = 'clore-studio-v2';
 const PRECACHE = [
   './',
   './index.html',
