@@ -1257,6 +1257,8 @@ var TEMPLATES = [];
 function T(id,name,tone,fn,opts){
   TEMPLATES.push(Object.assign({id:id,name:name,tone:tone,draw:fn},opts||{}));
 }
+var FULLBLEED = ['herolow','herocentre','detail','band','edge'];
+var isFullBleed = function(id){ return FULLBLEED.indexOf(id)>=0; };
 var templateById = function(id){ for(var i=0;i<TEMPLATES.length;i++) if(TEMPLATES[i].id===id) return TEMPLATES[i]; return TEMPLATES[0]; };
 
 /* Paint the chosen frame art behind everything, then the ground on top at
@@ -2702,7 +2704,11 @@ function panelColour(){
      }).join('')+'</div>'
     +'<div class="lbl" style="margin-top:10px">Fade it back<span class="v" id="v-bf">'+(getCfg('backdropFade')||0)+'%</span></div>'
     +rangeHTML('r-bf',0,95,1,getCfg('backdropFade')||0)
-    +'<div class="hint">Your frame art, now usable behind a still post as well as on a reel. Fade it back to let the ground colour take over.</div>');
+    +'<div class="hint">'
+    + (isFullBleed(S.template)
+       ? 'Heads up: <b>'+esc(templateById(S.template).name)+'</b> runs the photo edge to edge, so a backdrop sits behind it and will not show. Turn the photo off in Parts, or pick a template with a ground, such as Photo card, Gallery frame or Taped print.'
+       : 'Your frame art, now usable behind a still post as well as on a reel. Fade it back to let the ground colour take over.')
+    +'</div>');
   out+=grp('Type shadow',null,
     chipsHTML([['none','None'],['soft','Soft'],['strong','Strong']],getCfg('shadow')||'soft','data-shadow')
     +'<div class="hint">A shadow behind the words on the full bleed templates. With this on you can pull the gradient right down and still read the headline, which is usually what you want when the product is dark.</div>');
