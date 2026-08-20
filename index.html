@@ -543,7 +543,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
     <div class="footbar">
       <div class="footinfo"></div>
       <button class="fbtn" data-next="3">Back</button>
-      <button class="fbtn go" id="btn-runexport">Export everything</button>
+      <button class="fbtn go" id="btn-runexport">Make the files</button>
     </div>
   </section>
 
@@ -2332,6 +2332,7 @@ function go(n){
   if(n===1) renderProducts();
   if(n===2) renderTemplates();
   if(n===3){ renderRefine(); schedulePreview(); }
+  if(n!==4 && typeof clearMade==='function') clearMade();
   if(n===4) renderExport();
   updateFoot();
   persist();
@@ -2369,7 +2370,13 @@ function updateFoot(){
     bits.push('<b>'+(S.picked.indexOf(h)+1)+' of '+S.picked.length+'</b>');
     bits.push(templateById(S.template).name);
   } else {
-    bits.push('<b>'+totalPosts()+'</b> file'+(totalPosts()===1?'':'s')+' ready');
+    if(typeof MADE!=='undefined' && MADE && MADE.length){
+      bits.push('<b>'+MADE.length+'</b> file'+(MADE.length===1?'':'s')+' made');
+      var b=$('btn-runexport'); if(b) b.textContent='Make them again';
+    } else {
+      bits.push('<b>'+totalPosts()+'</b> file'+(totalPosts()===1?'':'s')+' to make');
+      var b2=$('btn-runexport'); if(b2) b2.textContent='Make the files';
+    }
   }
   $$('.footinfo').forEach(function(el){ el.innerHTML = bits.join(' &middot; '); });
 }
@@ -3080,6 +3087,10 @@ function bindGlobal(){
     S.picked=list.slice(0,12).map(function(p){return p.handle;});
     S.activeIdx=0; renderProducts(); persist();
   };
+  $('btn-runexport').onclick=function(){
+    if(MADE && MADE.length){ clearMade(); renderExport(); return; }
+    makeFiles('all');
+  };
   $('btn-restart').onclick=function(){
     if(!confirm('Start over? Your selections and edits will be cleared.')) return;
     try{ localStorage.removeItem(LSK); }catch(e){}
@@ -3182,10 +3193,21 @@ function canvasBlob(cv,type,q){
   return new Promise(function(res){ cv.toBlob(function(b){ res(b); }, type, q); });
 }
 
+/* ---------- platform ---------- */
+var IS_IOS = /iP(hone|ad|od)/.test(navigator.userAgent) ||
+             (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+var IS_STANDALONE = (window.navigator.standalone===true) ||
+                    matchMedia('(display-mode: standalone)').matches;
+/* An <a download> is unreliable inside an installed iOS web app, so a zip is
+   not offered there. The share sheet is, and it is the better path anyway. */
+var CAN_DOWNLOAD = !(IS_IOS && IS_STANDALONE);
+
+var MADE = null;   // [{file, url, handle, fmt, name}]
+
 /* ---------- export screen ---------- */
 function renderExport(){
+  if(MADE && MADE.length) return renderResults();
   var fmts=stillFormats(), n=S.picked.length;
-  var wantsReel=S.intents.indexOf('reel')>=0;
   var o=S.export||(S.export={type:'png',hq:false,captions:true});
   var html='';
   html+='<div class="h1">Export</div>';
@@ -3194,99 +3216,154 @@ function renderExport(){
     return '<span class="chip sm on">'+FORMATS[f].name+' <span class="ct">'+FORMATS[f].tag+'</span></span>'; }).join('')+'</div>');
   html+=grp('File type',null, chipsHTML([['png','PNG'],['jpeg','JPEG']],o.type,'data-extype')
     + '<div class="sw'+(o.hq?' on':'')+'" data-exsw="hq" style="margin-top:8px"><span class="n">Double resolution</span><span class="t"></span></div>'
-    + '<div class="sw'+(o.captions?' on':'')+'" data-exsw="captions"><span class="n">Include a captions file</span><span class="t"></span></div>');
-  html+=grp('How',null,
+    + '<div class="sw'+(o.captions?' on':'')+'" data-exsw="captions"><span class="n">Include the captions</span><span class="t"></span></div>');
+  html+=grp('What to make',null,
     '<div class="row wrap">'
-    + (CAN_SHARE_FILES ? '<button class="chip" id="ex-share">Share to Instagram</button>' : '')
-    + '<button class="chip" id="ex-zip">Download as a zip</button>'
-    + '<button class="chip" id="ex-one">Just this post</button>'
-    + '</div>'
-    + '<div class="hint">'+(CAN_SHARE_FILES
-      ? 'Share hands the images straight to the share sheet and copies the caption to your clipboard at the same time. On a phone that is the fast path.'
-      : 'A zip keeps every file named by product, template and size, with the captions alongside.')+'</div>');
+    +'<button class="chip" id="ex-all">Make all '+totalPosts()+'</button>'
+    +'<button class="chip" id="ex-one">Just this post</button></div>'
+    +'<div class="hint">'+(IS_IOS
+      ? 'On a phone the files are made first, then you tap once more to hand them to the share sheet. That second tap is what iOS needs in order to let a web app open the sheet at all, so it is deliberate rather than an extra step for its own sake.'
+      : 'The files are made first and then shown, so you can check them before anything leaves the browser.')+'</div>');
   html+='<div class="divider"></div>';
   html+=grp('Motion',null,
     '<div class="row wrap">'
     +'<button class="chip" id="ex-goanim">Animate this post</button>'
     +'<button class="chip" id="ex-goreel">Reel from a clip</button>'
-    +'<button class="chip" id="ex-fcp">Final Cut package</button></div>'
+    + (CAN_DOWNLOAD ? '<button class="chip" id="ex-fcp">Final Cut package</button>' : '')
+    +'</div>'
     +'<div class="hint">Animate takes the design you just made, splits it into its real layers and moves them one at a time. Reel puts your own footage inside the frame art.</div>');
-  html+='<div class="divider"></div>';
-  html+=grp('Files you will get',null,'<div class="card" style="font-size:11.5px;line-height:1.7;color:var(--tx2);word-break:break-all">'
-    + S.picked.slice(0,6).map(function(h){
-        return fmts.map(function(f){ return esc(fileName(h,f,o.type==='jpeg'?'jpg':'png')); }).join('<br>');
-      }).join('<br>')
-    + (S.picked.length>6?'<br>and '+(S.picked.length-6)+' more products':'')
-    + (o.captions?'<br>captions.txt':'') + '</div>');
   $('exportbody').innerHTML=html;
 
   $$('[data-extype]').forEach(function(b){ b.onclick=function(){ S.export.type=b.dataset.extype; renderExport(); }; });
   $$('[data-exsw]').forEach(function(b){ b.onclick=function(){ S.export[b.dataset.exsw]=!S.export[b.dataset.exsw]; renderExport(); }; });
-  var z=$('ex-zip'); if(z) z.onclick=function(){ runExport('zip'); };
-  var sh=$('ex-share'); if(sh) sh.onclick=function(){ runExport('share'); };
-  var one=$('ex-one'); if(one) one.onclick=function(){ runExport('one'); };
+  var a=$('ex-all'); if(a) a.onclick=function(){ makeFiles('all'); };
+  var one=$('ex-one'); if(one) one.onclick=function(){ makeFiles('one'); };
   var gr=$('ex-goreel'); if(gr) gr.onclick=function(){ openMotion('reel'); };
   var ga=$('ex-goanim'); if(ga) ga.onclick=function(){ openMotion('anim'); };
   var gf=$('ex-fcp'); if(gf) gf.onclick=function(){ exportFCP(); };
   updateFoot();
 }
 
-async function runExport(mode){
+/* ---------- results: everything already rendered, nothing left to wait for ---------- */
+function renderResults(){
+  var capText = MADE.map(function(m){ return m.cap; }).filter(function(v,i,a){ return a.indexOf(v)===i; }).join('\n\n\n');
+  var canShare = !!(navigator.canShare && navigator.share && navigator.canShare({files:MADE.map(function(m){return m.file;})}));
+  var html='';
+  html+='<div class="h1">'+MADE.length+' file'+(MADE.length===1?'':'s')+' ready</div>';
+  html+='<div class="sub">'+(IS_IOS
+    ? 'Tap Save to Photos and pick <b>Save '+MADE.length+' Image'+(MADE.length===1?'':'s')+'</b>, or Instagram straight from the sheet. If you would rather do it by hand, press and hold any picture below and choose Save to Photos.'
+    : 'Check them, then take them however suits you.')+'</div>';
+
+  html+='<div class="row wrap" style="margin-bottom:14px">';
+  if(canShare) html+='<button class="fbtn go" id="rs-share">'+(IS_IOS?'Save to Photos':'Share')+' &middot; '+MADE.length+'</button>';
+  if(S.export.captions) html+='<button class="chip" id="rs-cap">Copy the caption</button>';
+  if(CAN_DOWNLOAD) html+='<button class="chip" id="rs-zip">Download a zip</button>';
+  html+='<button class="chip" id="rs-again">Start again</button>';
+  html+='</div>';
+
+  if(!canShare && IS_IOS){
+    html+='<div class="card" style="border-color:#5A3A1A;background:#1E1712">'
+      +'<div style="font-weight:700;font-size:13px;margin-bottom:4px">The share sheet would not take all of them at once</div>'
+      +'<div class="hint" style="margin:0">Use the share button on each picture below, or press and hold a picture and choose Save to Photos.</div></div>';
+  }
+
+  html+='<div class="pgrid" style="margin-top:4px">'+MADE.map(function(m,i){
+    return '<div class="pcard" style="border-color:var(--line)">'
+      +'<span class="ph" style="aspect-ratio:'+(FORMATS[m.fmt].w)+'/'+(FORMATS[m.fmt].h)+'">'
+      +'<img src="'+m.url+'" alt="" style="object-fit:contain;background:#0E0D0C"></span>'
+      +'<span class="pb"><span class="pt" style="min-height:0">'+esc(FORMATS[m.fmt].name)+'</span>'
+      +'<span class="pm">'+esc(m.short)+'</span>'
+      +'<span class="row" style="margin-top:6px;gap:5px">'
+      +'<button class="chip sm" data-share1="'+i+'">Save</button>'
+      + (CAN_DOWNLOAD?'<button class="chip sm" data-dl1="'+i+'">File</button>':'')
+      +'</span></span></div>';
+  }).join('')+'</div>';
+
+  if(S.export.captions){
+    html+='<div class="divider"></div>';
+    html+=grp('Captions',null,'<div class="card cap" style="max-height:260px;overflow:auto">'+esc(capText)+'</div>');
+  }
+  $('exportbody').innerHTML=html;
+
+  /* Every one of these fires navigator.share inside the tap itself. Nothing is
+     awaited first, because iOS drops the activation the moment you do. */
+  var sh=$('rs-share');
+  if(sh) sh.onclick=function(){
+    if(S.export.captions) copyText(capText,'Caption');
+    var files=MADE.map(function(m){ return m.file; });
+    navigator.share({files:files})
+      .then(function(){ toast(IS_IOS?'Saved. Caption is on your clipboard.':'Shared'); })
+      .catch(function(e){ if(e && e.name!=='AbortError') toast('Could not open the share sheet, try one at a time'); });
+  };
+  $$('[data-share1]').forEach(function(b){
+    b.onclick=function(){
+      var m=MADE[+b.dataset.share1];
+      if(S.export.captions) copyText(m.cap,'Caption');
+      if(navigator.share && navigator.canShare && navigator.canShare({files:[m.file]})){
+        navigator.share({files:[m.file]})
+          .then(function(){ toast('Saved'); })
+          .catch(function(e){ if(e && e.name!=='AbortError') toast('Press and hold the picture instead'); });
+      } else if(CAN_DOWNLOAD){ download(m.file,m.name); }
+      else toast('Press and hold the picture and choose Save to Photos');
+    };
+  });
+  $$('[data-dl1]').forEach(function(b){
+    b.onclick=function(){ var m=MADE[+b.dataset.dl1]; download(m.file,m.name); };
+  });
+  var rc=$('rs-cap'); if(rc) rc.onclick=function(){ copyText(capText,'Caption'); };
+  var rz=$('rs-zip');
+  if(rz) rz.onclick=function(){
+    var files=MADE.map(function(m){ return {name:m.name,data:m.bytes}; });
+    if(S.export.captions) files.push({name:'captions.txt',data:new TextEncoder().encode(capText)});
+    download(zipStore(files),'clore_'+new Date().toISOString().slice(0,10)+'_'+MADE.length+'files.zip');
+    toast(files.length+' files packed');
+  };
+  var ra=$('rs-again'); if(ra) ra.onclick=function(){ clearMade(); renderExport(); };
+  updateFoot();
+}
+function clearMade(){
+  if(MADE) MADE.forEach(function(m){ try{ URL.revokeObjectURL(m.url); }catch(e){} });
+  MADE=null;
+}
+
+/* ---------- render every file up front, then stop and hand over ---------- */
+async function makeFiles(which){
   var o=S.export||{type:'png',hq:false,captions:true};
   var fmts=stillFormats();
-  var handles = mode==='one' ? [activeHandle()] : S.picked.slice();
+  var handles = which==='one' ? [activeHandle()] : S.picked.slice();
   if(!handles.length || !handles[0]){ toast('Nothing selected'); return; }
   var scale=o.hq?2:1, type=o.type==='jpeg'?'image/jpeg':'image/png', ext=o.type==='jpeg'?'jpg':'png';
   var total=handles.length*fmts.length, done=0;
-  busy(true,'Rendering','0 of '+total);
+  clearMade();
+  busy(true,'Making the files','0 of '+total);
   await ensureFonts();
   var cv=document.createElement('canvas');
-  var files=[], shareFiles=[], caps=[];
-
+  var made=[];
   for(var i=0;i<handles.length;i++){
+    var h=handles[i];
+    var cap = captionFor(h) + (o.captions ? ('\n\n'+tagsFor(h)) : '');
     for(var j=0;j<fmts.length;j++){
-      var h=handles[i], f=fmts[j];
+      var f=fmts[j];
       try{
         await renderTo(cv,{handle:h,format:f,scale:scale});
         var blob=await canvasBlob(cv,type,0.94);
         var name=fileName(h,f,ext);
-        if(mode==='share'){
-          shareFiles.push(new File([blob],name,{type:type}));
-        } else if(mode==='zip'){
-          files.push({name:name,data:new Uint8Array(await blob.arrayBuffer())});
-        } else {
-          download(blob,name);
-          await new Promise(function(r){ setTimeout(r,260); });
-        }
-      }catch(e){ console.warn('export failed',h,f,e); }
-      done++; busy(true,'Rendering',done+' of '+total);
+        made.push({
+          file:new File([blob],name,{type:type}),
+          bytes:new Uint8Array(await blob.arrayBuffer()),
+          url:URL.createObjectURL(blob),
+          handle:h, fmt:f, name:name, cap:cap,
+          short: itemFor(h).headline.slice(0,26)
+        });
+      }catch(e){ console.warn('render failed',h,f,e); }
+      done++; busy(true,'Making the files',done+' of '+total);
     }
-    caps.push('=== '+itemFor(handles[i]).headline+' ===\n'+captionFor(handles[i])+'\n\n'+tagsFor(handles[i]));
   }
-
-  var capText=caps.join('\n\n\n');
-  if(mode==='zip'){
-    if(o.captions) files.push({name:'captions.txt',data:new TextEncoder().encode(capText)});
-    busy(true,'Packing','building the zip');
-    var zip=zipStore(files);
-    download(zip,'clore_'+new Date().toISOString().slice(0,10)+'_'+handles.length+'posts.zip');
-    busy(false); toast(files.length+' files packed');
-  } else if(mode==='share'){
-    busy(false);
-    try{
-      if(o.captions) copyText(capText,'Caption');
-      if(navigator.canShare && navigator.canShare({files:shareFiles})){
-        await navigator.share({files:shareFiles, title:'3D Film Parts'});
-        toast('Shared. Caption is on your clipboard.');
-      } else {
-        shareFiles.forEach(function(f,k){ setTimeout(function(){ download(f,f.name); }, k*280); });
-        toast('Share sheet would not take them, downloading instead');
-      }
-    }catch(e){ if(e && e.name!=='AbortError') toast('Share cancelled'); }
-  } else {
-    if(o.captions) download(new Blob([capText],{type:'text/plain'}),'captions.txt');
-    busy(false); toast('Downloaded');
-  }
+  busy(false);
+  if(!made.length){ toast('Nothing rendered'); return; }
+  MADE=made;
+  renderResults();
+  try{ document.querySelector('.screen.on .scrollarea').scrollTop=0; }catch(e){}
 }
 
 /* ---------- boot ---------- */
