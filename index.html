@@ -282,7 +282,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
 #motionroot canvas{display:block;border-radius:3px;max-width:100%;max-height:100%;
   box-shadow:0 24px 60px -18px rgba(0,0,0,.9),0 0 0 1px rgba(255,255,255,.07);background:#111}
 #motionroot .stagebar{flex:0 0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
-#motionroot .panelbox{flex:0 0 380px;max-width:380px;background:var(--bg2);
+#motionroot .panelbox{flex:0 0 clamp(380px,27vw,540px);max-width:540px;background:var(--bg2);
   border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
 @media (max-width:880px){
   #motionroot .splitbody{flex-direction:column}
@@ -388,11 +388,14 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
   flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
   gap:10px;padding:16px;background:radial-gradient(1000px 500px at 50% -10%,#191816 0%,var(--bg) 62%);overflow:hidden;
 }
-#rpanel{flex:0 0 380px;max-width:380px;background:var(--bg2);border-left:1px solid var(--line);
-  display:flex;flex-direction:column;min-height:0}
-#rtabs{flex:0 0 auto;display:flex;gap:2px;padding:8px 8px 0;border-bottom:1px solid var(--line);
-  overflow-x:auto;scrollbar-width:none}
-#rtabs::-webkit-scrollbar{display:none}
+#rpanel{flex:0 0 clamp(380px,27vw,540px);max-width:540px;background:var(--bg2);
+  border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+/* The tab strip wraps rather than scrolling out of sight. A label running off
+   the edge of the window is the one thing this app is not allowed to do. */
+#rtabs{flex:0 0 auto;display:flex;flex-wrap:wrap;gap:2px;padding:8px 8px 0;
+  border-bottom:1px solid var(--line)}
+#rtabs .tab{flex:1 1 auto;text-align:center;min-width:0;padding:9px 10px 11px;
+  letter-spacing:0;white-space:nowrap}
 #rbody{flex:1 1 auto;overflow-y:auto;overscroll-behavior:contain;padding:14px;
   padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 #queuebar{flex:0 0 auto;display:flex;gap:6px;padding:8px 10px;border-top:1px solid var(--line);
@@ -690,7 +693,7 @@ var DEFAULT_BASE = function(){
     logoColour:'auto',
     shadow:'soft',
     rule:{ len:96, thick:6, skew:0, style:'bar' },
-    badgeStyle:{ shape:'circle', fill:'red', text:'white', size:100 },
+    badgeStyle:{ shape:'circle', fill:'red', text:'white', size:100, rotate:0, points:12 },
     safe:true
   };
 };
@@ -1188,7 +1191,83 @@ function drawBadge(P, cx, cy, r){
   var txtCol = BADGE_FILL[B.text]||'#FFFFFF';
   ctx.save();
   if(B.shape==='none'){ ctx.restore(); return; }
-  if(B.shape==='pill' || B.shape==='tab'){
+  /* everything below draws around (cx,cy) so rotation is free */
+  if(B.rotate) { ctx.translate(cx,cy); ctx.rotate(B.rotate*Math.PI/180); ctx.translate(-cx,-cy); }
+  var inner = r;   /* the radius the text has to live inside, per shape */
+
+  /* --- text only, no container --- */
+  if(B.shape==='plain' || B.shape==='underline'){
+    setFont(ctx,F.t,r*0.40,0.10);
+    var twp=textW(ctx,t,0.10,r*0.40);
+    ctx.fillStyle=txtCol; ctx.textBaseline='middle';
+    drawText(ctx,t,cx,cy,0.10,r*0.40,'center');
+    if(B.shape==='underline'){
+      ctx.fillStyle = B.fill==='clear' ? txtCol : fill;
+      ctx.fillRect(cx-twp/2, cy+r*0.30, twp, Math.max(3,r*0.09));
+    }
+    ctx.restore(); return;
+  }
+
+  /* --- sale burst --- */
+  if(B.shape==='burst'){
+    var pts=Math.max(8,Math.min(24,B.points||12));
+    inner = r*0.70;   /* text must fit inside the valleys, not the points */
+    ctx.beginPath();
+    for(var i=0;i<pts*2;i++){
+      var ang=(Math.PI*i)/pts - Math.PI/2;
+      var rad=(i%2===0)? r : r*0.66;
+      var px=cx+Math.cos(ang)*rad, py=cy+Math.sin(ang)*rad;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+    if(B.fill==='clear'){ ctx.strokeStyle=txtCol; ctx.lineWidth=Math.max(2,3*u); ctx.stroke(); }
+    else { ctx.fillStyle=fill; ctx.fill(); }
+  }
+
+  /* --- rubber stamp: double ring --- */
+  else if(B.shape==='stamp'){
+    ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.strokeStyle = B.fill==='clear'? txtCol : fill;
+    ctx.lineWidth=Math.max(3,r*0.09); ctx.stroke();
+    ctx.beginPath(); ctx.arc(cx,cy,r*0.84,0,Math.PI*2);
+    ctx.lineWidth=Math.max(1.5,r*0.035); ctx.stroke();
+    txtCol = B.fill==='clear'? txtCol : fill;
+    inner = r*0.76;
+  }
+
+  /* --- ribbon: banner with notched ends --- */
+  else if(B.shape==='ribbon'){
+    setFont(ctx,F.t,r*0.34,0.10);
+    var twr=textW(ctx,t,0.10,r*0.34), rw=twr+r*1.10, rh=r*0.80, notch=rh*0.42;
+    var x0=cx-rw/2, y0=cy-rh/2;
+    ctx.beginPath();
+    ctx.moveTo(x0,y0); ctx.lineTo(x0+rw,y0); ctx.lineTo(x0+rw-notch,y0+rh/2);
+    ctx.lineTo(x0+rw,y0+rh); ctx.lineTo(x0,y0+rh); ctx.lineTo(x0+notch,y0+rh/2);
+    ctx.closePath();
+    if(B.fill==='clear'){ ctx.strokeStyle=txtCol; ctx.lineWidth=Math.max(2,3*u); ctx.stroke(); }
+    else { ctx.fillStyle=fill; ctx.fill(); }
+    ctx.fillStyle=txtCol; ctx.textBaseline='middle';
+    drawText(ctx,t,cx,cy,0.10,r*0.34,'center');
+    ctx.restore(); return;
+  }
+
+  /* --- flag: rectangle with a chevron cut out of the right --- */
+  else if(B.shape==='flag'){
+    setFont(ctx,F.t,r*0.34,0.10);
+    var twf=textW(ctx,t,0.10,r*0.34), fw=twf+r*0.90, fh=r*0.78, cut=fh*0.40;
+    var fx=cx-fw/2, fy=cy-fh/2;
+    ctx.beginPath();
+    ctx.moveTo(fx,fy); ctx.lineTo(fx+fw,fy); ctx.lineTo(fx+fw-cut,fy+fh/2);
+    ctx.lineTo(fx+fw,fy+fh); ctx.lineTo(fx,fy+fh);
+    ctx.closePath();
+    if(B.fill==='clear'){ ctx.strokeStyle=txtCol; ctx.lineWidth=Math.max(2,3*u); ctx.stroke(); }
+    else { ctx.fillStyle=fill; ctx.fill(); }
+    ctx.fillStyle=txtCol; ctx.textBaseline='middle';
+    drawText(ctx,t,cx-cut*0.35,cy,0.10,r*0.34,'center');
+    ctx.restore(); return;
+  }
+
+  else if(B.shape==='pill' || B.shape==='tab'){
     setFont(ctx,F.t,r*0.34,0.10);
     var tw=textW(ctx,t,0.10,r*0.34), pw=tw+r*0.66, ph=r*0.86;
     var px=cx-pw/2, py=cy-ph/2;
@@ -1199,7 +1278,7 @@ function drawBadge(P, cx, cy, r){
     drawText(ctx,t,cx,cy,0.10,r*0.34,'center');
     ctx.restore(); return;
   }
-  if(B.shape==='corner'){
+  else if(B.shape==='corner'){
     setFont(ctx,F.t,r*0.32,0.10);
     var tw2=textW(ctx,t,0.10,r*0.32);
     ctx.save(); ctx.translate(cx,cy); ctx.rotate(-Math.PI/4);
@@ -1208,15 +1287,17 @@ function drawBadge(P, cx, cy, r){
     drawText(ctx,t,0,0,0.10,r*0.32,'center');
     ctx.restore(); ctx.restore(); return;
   }
-  ctx.beginPath();
-  if(B.shape==='square') roundRect(ctx,cx-r,cy-r,r*2,r*2,r*0.18);
-  else ctx.arc(cx,cy,r,0,Math.PI*2);
-  if(B.fill==='clear'){ ctx.strokeStyle=txtCol; ctx.lineWidth=Math.max(2,3.5*u); ctx.stroke(); }
-  else { ctx.fillStyle=fill; ctx.fill(); }
-  var words = t.split(/\s+/), lines=[], size = r*0.30;
-  for(var pass=0; pass<9; pass++){
-    lines = wrapAt(ctx, t, F.t, size, 0.08, r*1.55);
-    if(lines.length*size*1.28 <= r*1.6) break;
+  else {
+    ctx.beginPath();
+    if(B.shape==='square') roundRect(ctx,cx-r,cy-r,r*2,r*2,r*0.18);
+    else ctx.arc(cx,cy,r,0,Math.PI*2);
+    if(B.fill==='clear'){ ctx.strokeStyle=txtCol; ctx.lineWidth=Math.max(2,3.5*u); ctx.stroke(); }
+    else { ctx.fillStyle=fill; ctx.fill(); }
+  }
+  var words = t.split(/\s+/), lines=[], size = inner*0.30;
+  for(var pass=0; pass<12; pass++){
+    lines = wrapAt(ctx, t, F.t, size, 0.08, inner*1.52);
+    if(lines.length*size*1.28 <= inner*1.55) break;
     size *= 0.88;
   }
   ctx.fillStyle=txtCol;
@@ -2665,13 +2746,22 @@ function panelParts(){
   var B=getCfg('badgeStyle')||{};
   out+=grp('Badge style',null,
     '<div class="lbl">Shape</div>'
-    +chipsHTML([['circle','Circle'],['pill','Pill'],['square','Square'],['tab','Tab'],['corner','Corner'],['none','None']],B.shape||'circle','data-bshape')
+    +chipsHTML([['circle','Circle'],['pill','Pill'],['square','Square'],['tab','Tab'],
+                ['burst','Sale burst'],['stamp','Stamp'],['ribbon','Ribbon'],['flag','Flag'],
+                ['corner','Corner'],['plain','Text only'],['underline','Underlined'],['none','None']],
+               B.shape||'circle','data-bshape')
     +'<div class="lbl" style="margin-top:10px">Fill</div>'
     +chipsHTML([['red','Red'],['ink','Ink'],['white','White'],['paper','Paper'],['gold','Gold'],['clear','Outline']],B.fill||'red','data-bfill')
     +'<div class="lbl" style="margin-top:10px">Text</div>'
     +chipsHTML([['white','White'],['ink','Ink'],['red','Red'],['paper','Paper']],B.text||'white','data-btext')
     +'<div class="lbl" style="margin-top:10px">Size<span class="v" id="v-bs">'+(B.size||100)+'%</span></div>'
-    +rangeHTML('r-bs',50,170,2,B.size||100));
+    +rangeHTML('r-bs',50,170,2,B.size||100)
+    +'<div class="lbl">Angle<span class="v" id="v-br">'+(B.rotate||0)+'&deg;</span></div>'
+    +rangeHTML('r-br',-45,45,1,B.rotate||0)
+    + (B.shape==='burst'
+       ? '<div class="lbl">Points<span class="v" id="v-bp">'+(B.points||12)+'</span></div>'
+         +rangeHTML('r-bp',8,24,1,B.points||12) : '')
+    +'<div class="hint">Outline fill plus Text only or Underlined gives you a badge with no block behind it, which sits better on a busy photo.</div>');
 
   out+=grp('Badge and buttons',null,
     '<div class="lbl">Badge</div><input type="text" id="t-badge" value="'+esc(getCfg('text.badge')||'')+'" placeholder="Leave empty to hide">'
@@ -2848,6 +2938,9 @@ function bindPanel(){
   live('r-rl','rule.len','v-rl',0,'');
   live('r-rt','rule.thick','v-rt',0,'');
   live('r-bs','badgeStyle.size','v-bs',0,'%');
+  live('r-bp','badgeStyle.points','v-bp',0,'');
+  (function(){ var el=$('r-br'); if(!el) return;
+    el.oninput=function(){ var v=+el.value; var L=$('v-br'); if(L) L.innerHTML=v+'&deg;'; setCfg('badgeStyle.rotate',v); }; })();
   live('r-ai','area.imageShare','v-ai',0,'%');
   live('r-am','area.margin','v-am',0,'%');
   live('r-ad','area.detailSize','v-ad',0,'%');
