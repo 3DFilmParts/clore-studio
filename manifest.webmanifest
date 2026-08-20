@@ -1,12 +1,12 @@
 {
   "name": "CLORE Studio",
   "short_name": "CLORE",
-  "description": "On-brand social content maker for 3D Film Parts",
+  "description": "Social posts, stories and reels for 3D Film Parts, straight from the live store",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#F2EFE8",
+  "background_color": "#0B0B0A",
   "theme_color": "#E8231F",
   "icons": [
     { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },

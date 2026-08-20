@@ -1,7 +1,7 @@
-/* CLORE Studio service worker — network-first with cache fallback.
+/* CLORE Studio service worker, network first with cache fallback.
    Fresh deploys win when online; the whole app (single self-contained file)
    keeps working offline once visited. */
-const CACHE = 'clore-studio-v2';
+const CACHE = 'clore-studio-v3';
 const PRECACHE = [
   './',
   './index.html',
@@ -10,6 +10,9 @@ const PRECACHE = [
   './icons/icon-512.png',
   './icons/maskable-512.png'
 ];
+/* Frame art is fetched on demand and then kept: it is large, and a phone on a
+   set with no signal should still be able to build a post. */
+const KEEP = /clore-templates\/(reel-frames|preview-assets)\//;
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
@@ -28,6 +31,16 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (e) => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET' || url.origin !== location.origin) return;
+  if (KEEP.test(url.pathname)) {
+    e.respondWith(
+      caches.match(e.request).then((m) => m || fetch(e.request).then((r) => {
+        const copy = r.clone();
+        caches.open(CACHE).then((c) => c.put(e.request, copy));
+        return r;
+      }))
+    );
+    return;
+  }
   e.respondWith(
     fetch(e.request)
       .then((r) => {

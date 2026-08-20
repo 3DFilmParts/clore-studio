@@ -1,117 +1,92 @@
-# Handoff: CLORE Studio — 3D Film Parts creative tool
+# CLORE Studio
 
-## Overview
-CLORE Studio is a browser-based creative tool for 3D Film Parts (3dfilmparts.com). It generates
-on-brand product marketing assets from the live Shopify catalogue across four workspaces:
+Social content for **3D Film Parts**, built from the live store.
+One self-contained HTML file. Open it on a phone, add it to the home screen, make posts.
 
-1. **Design** — fills brand templates (T02–T13) with product data; exports PNG / JPEG / SVG at
-   production size in five formats (square 1080x1080, portrait 1080x1350, story 1080x1920,
-   webbanner 1600x600, emailbanner 1200x400). Includes a render queue and shareable presets.
-2. **Animation** — decomposes the current design into layers (logo, badge, eyebrow, headline,
-   rule, price, CTA, product image cycle) and records animated MP4/WebM with per-layer effects,
-   easing, stagger, Ken Burns. Optionally drop a video into the design's image slot: it plays
-   in place of the image cycle, the export runs for the whole clip, and the clip's audio is
-   recorded into the MP4 (preview stays muted; sound is audible while the export records).
-3. **Batch** — pick a product category to load every product in it, or deal 10 random catalogue
-   products, styled with the current template/format/preset; one-click export of the whole batch
-   as PNG / JPEG / MP4 (sequential, with Stop button). Categories come from the live catalogue's
-   product types, shown with counts; Shuffle re-deals within the selected category.
-4. **Reel** — vertical 1080x1920 video maker: drop in an edited phone video, choose from 13 brand
-   skins (6 hand-drawn + 7 AI-generated frames incl. the Camera Tape 1–5 family), timed text
-   overlays, animated badge stickers, rolling timecode slate, progress bar, optional CTA end card,
-   exports MP4 at the source video's own frame rate with audio.
+Live: https://3dfilmparts.github.io/clore-studio/
 
-### v1.1 additions (Design workspace)
-- **Carousel builder** — a 5-slide Instagram story arc for the selected product
-  (hero → closer look → on set → angles → call to action), each slide on a different brand
-  template, portrait or square, with image shuffle. Exports numbered `01–05` PNG/JPEG files at
-  production size, ready to upload in order.
-- **Caption + hashtag generator** — ready-to-paste caption built from the live product data
-  (hook line, store description when available, price + product URL, CTA) with a rotating
-  "New angle" variant, plus a brand/camera-specific/niche hashtag set. One-click copy for
-  caption, hashtags, or both. Captions are editable in place.
-- These features live in the deployed bundle (`index.html` / standalone HTML); the
-  `.dc.html` source reference predates them.
+---
 
-### v1.2 additions (mobile app)
-- **Responsive mobile layout** — below 820px the app stacks (stage first, controls below) with a
-  fixed bottom tab bar (Post / Design / Anim / Batch / Reel) and previews that fit the screen.
-- **Installable PWA** — `manifest.webmanifest`, `sw.js` (network-first, offline fallback), branded
-  icons. Add to Home Screen on iPhone/Android launches it fullscreen like a native app and it
-  keeps working offline after first load.
-- **Quick Post mode** — phone-first flow: horizontal product strip → swipeable template styles →
-  format chips → live preview → **Share image / Share carousel** via the native share sheet
-  (`navigator.share` with files, straight into Instagram; caption + hashtags auto-copied to the
-  clipboard on tap). Falls back to file downloads in browsers without a share sheet.
+## How it works
 
-### v1.3 additions (Animation + Batch)
-- **Video in the Anim image slot** — upload a clip in the Animation sidebar; it plays inside the
-  design's image area instead of the image cycle, the MP4 export runs for the full clip length,
-  and the clip's audio track is captured into the export (same capture pipeline as the Reel
-  workspace). The video lives in the browser session only — re-select after a reload.
-- **Batch categories** — a category pill row (built live from the catalogue's product types, with
-  counts) above the Batch controls. Picking a category loads *every* product in it; Random 10
-  keeps the old shuffled deal; Shuffle re-deals/re-orders within the current selection.
+Five steps, in the order you actually think in.
 
-## About the files in this bundle
+1. **What** are you making. Post, Story, Reel, Banner. Pick one or pick all of them.
+2. **Products.** The whole catalogue, live from `3dfilmparts.com/products.json`, filtered by
+   category, searchable, multi select. Or upload your own photos, or start blank.
+3. **Template.** Every template is drawn live with your own first product, so you are choosing
+   the actual result rather than a thumbnail of something else.
+4. **Refine.** Full control over every element, with the type sizing itself so nothing clips.
+5. **Export.** Share sheet on a phone, a named zip on a computer, captions alongside.
+
+## The rules this app enforces in code, not by habit
+
+- **Type never clips and never collides.** Blocks are measured before anything is drawn and the
+  whole stack shrinks together until it fits. If it still will not fit at the floor size the app
+  says so out loud rather than cutting a word in half.
+- **No eyebrow labels.** Anywhere.
+- **Nothing small is ever thin.** There is a floor size and a floor weight for small copy, so the
+  spidery wide-tracked look is not reachable even by accident.
+- **No em dashes** in anything the app generates. One `clean()` function is the choke point.
+- **Price is off by default.** The store sells into a lot of countries and one currency figure
+  causes more questions than it answers.
+- **The accent rule is off by default** for the same reason: it reads as template furniture.
+
+## What is in it
+
+**18 templates**, each of which works at all five sizes:
+Hero, Hero centred, Photo card, Headline first, Split block, Poster, Gallery frame,
+Hero + detail, Colour band, Two angles, Three up, Statement, Spec sheet, Taped print,
+Ruled edge, Hero + 3 angles, Hero + 4 angles, Contact sheet.
+
+**Five sizes**, every one of them available on every template:
+square 1080x1080, portrait 1080x1350, story 1080x1920, web banner 1600x600, email 1200x400.
+
+**Type.** Ten named pairings, eleven display faces, eight text faces, and a separate override for
+headline, description and the price/button/handle line.
+
+**Colour.** Seven grounds, four accents, and full control of the gradient over the photo:
+shape, strength, where it starts, softness, blend mode, and a follow-the-text mode that sizes the
+gradient to the words so a dark product stops disappearing into a dark gradient. Plus a type
+shadow, which is what lets the gradient come right down and still leave the headline readable.
+
+**Backdrops.** 21 pieces of frame art: twelve new photographic ones shot to brand
+(gaffer tape, torn paper, case foam, film edge, layer lines, cable run, red stripe, machined
+plate, cutting mat, paper sweep, grid paper, steel and cream) plus the original nine
+(Camera Tape 1 to 5, Film Slate, Edit Suite, Colour Grade, Gear Shop).
+
+**Images.** Six slots per post, chosen by tapping the actual product photos. Slot 1 is the hero,
+the rest fill the detail frames. Framing, zoom, position, corner and grade per post.
+
+**Captions.** Built from your real Shopify product description, spun into ten different angles at
+three lengths, regenerating endlessly. Five hashtags maximum, `#3dfilmparts` always among them.
+
+**Motion.** Two jobs, kept separate.
+- *Animated post* takes the design you just made, splits it into its real layers
+  (photo, logo, badge, headline, rule, description, price, shop line) and animates each one on its
+  own: effect, start, duration, distance, easing. Three starting points, then adjust anything.
+- *Reel* puts your own footage inside the frame art, with a movable window, titles, stickers,
+  progress bar and timecode, exported at the clip's own frame rate with its audio.
+
+**Final Cut.** Exports a zip with the stills and an `.fcpxml` timeline, ready for File, Import, XML.
+
+## Files
 
 | File | What it is |
 |---|---|
-| `CLORE Studio (standalone).html` | **Fully working, self-contained build.** One file, no server, no dependencies — all templates, tokens, frame art and badges are embedded. Works from `file://` or GitHub Pages as-is. |
-| `CLORE Studio Editor.dc.html (source reference)` | The original source (a Design Component). Reference only — it needs its host runtime and sibling folders to run. Read it for the full application logic. |
-| `clore-templates/` | The production design-system assets (see below). This folder is what the CLORE pipeline / any rebuild should consume. |
+| `index.html` | The whole app. No build step, no dependencies, no server. |
+| `legacy-v1.html` | The previous build, kept so nothing is lost. |
+| `clore-templates/reel-frames/` | Frame art and sticker badges. |
+| `clore-templates/preview-assets/` | The logos, also embedded in the app. |
+| `manifest.webmanifest`, `sw.js`, `icons/` | The bits that make it installable and work offline. |
 
-**Recommended GitHub layout:** commit the whole folder; serve `CLORE Studio (standalone).html`
-via GitHub Pages (rename to `index.html` if you like). If you later rebuild the tool in a
-framework, treat the standalone build as the working spec and `clore-templates/` as the asset
-source of truth.
+## Notes for anyone rebuilding it
 
-## Fidelity
-**High-fidelity and functional.** The standalone HTML is not a mock — every feature above works.
-A re-implementation should match it pixel-for-pixel and behaviour-for-behaviour.
-
-## clore-templates/ contents
-- `tokens.css` — CLORE design tokens v1.5 (`--clore-*`): Signal Red `#E8231F`, Ink `#141414`,
-  Paper `#F2EFE8`, White, faint greys; Archivo Black display + JetBrains Mono; tracking, radii,
-  eyebrow-bar dimensions, motifs.
-- `T02/T05A/T05B/T10/T11/T12/T13` — production HTML templates with `{{SLOT}}` placeholders:
-  `FORMAT, TITLE, EYEBROW, PRICE, BADGE, IMAGE, IMAGE2 (T10/T11), LOGO, TAPEBG (T13)`.
-  Empty `BADGE`/`PRICE` hide cleanly. Light grounds take the ink logo, dark grounds the white
-  logo (each file's header comment documents its rules).
-- `preview-assets/` — ink + white transparent logos.
-- `reel-frames/` — frame art: `frame-a` Film Slate, `frame-b` Camera Tape 1 dark,
-  `frame-c` Edit Suite, `frame-d` Colour Grade, `frame-e` Gear Shop (faded cartoon montage drawn
-  from real catalogue products), `frame-f/g/h/i` Camera Tape 2 paper / 3 red / 4 airy / 5 border;
-  `badge-new/hot/eyes.png` — alpha sticker badges.
-- `standalone-assets.js` — auto-generated pack embedding all of the above (`window.CLORE_ASSETS`).
-  **Regenerate this file whenever templates or frame art change**, then rebuild the standalone
-  HTML (the app prefers live files and falls back to this pack when fetches fail).
-
-## Key behaviours a rebuild must preserve
-- **Catalogue**: fetched from `https://3dfilmparts.com/products.json?limit=250` (Shopify),
-  fallback to a bundled 73-product list, then a built-in 16-product shortlist. Picking a product
-  fills title/price/eyebrow/badge and both image slots; badge default is `NEW PRODUCT`.
-- **Slot filling**: templates are plain text; replace every `{{KEY}}` occurrence. Image
-  scale/position are injected as a `<style>` override; headline scale via `h1 { zoom: n }`.
-- **Logo colour**: Auto (ink on light / white on dark, incl. T13 tape-ground override) with a
-  manual Black/White toggle in all workspaces.
-- **Exports**: filenames follow `{product-slug}_{template}_{format}.{ext}`
-  (`..._anim.mp4` for animation, `..._{skin}_story_reel.mp4` for reels). PNG has an HQ 2X mode.
-- **Reel engine**: 1080x1920 canvas; video drawn cover with zoom 0.4–2.5x; source fps
-  auto-detected via `requestVideoFrameCallback` and used for `canvas.captureStream(fps)`;
-  audio track piped from the source video; 24 Mbps video bitrate; MP4 where supported else WebM.
-- **Persistence**: everything (template settings, queue, anim setup, presets, reel config) lives
-  in `localStorage` key `clore-studio-editor-v1`; presets import/export as JSON and auto-load
-  from `clore-templates/presets.json` if present.
-- **Safe zones**: reel progress bar sits ~350px above the bottom edge to clear Instagram's
-  caption/CTA overlay zone; text overlays are user-positioned 5–95% vertically.
-
-## Design tokens (quick reference)
-- Signal Red `#E8231F` · Ink `#141414` · Paper `#F2EFE8` · White `#FFFFFF` · Faint `#8A8A86`
-- Display: Archivo Black (900), uppercase, letter-spacing -0.03em, line-height ~0.95
-- Mono: JetBrains Mono 400/700; eyebrows lowercase red with wide tracking; labels uppercase
-- Radii: 0 for hard-edge cards, pill for circle badges, 10–24px for tape/photo cards
-
-## Assets provenance
-Product photography comes from the 3D Film Parts Shopify CDN at runtime. Frame art and badge
-stickers were AI-generated to brand spec and are committed in `reel-frames/` — no runtime AI calls.
+- One canvas renderer draws the preview, the export, the template thumbnails and the video.
+  The preview *is* the export, scaled. There is no second code path to drift.
+- Shopify's CDN sends `access-control-allow-origin: *`, which is the only reason the canvas can
+  export product photography without tainting. Load product images with `crossOrigin`.
+- Templates paint the ground, photo and gradient straight to the canvas. Text, logo, badge and the
+  shop line go through helpers that can either paint immediately or hand a painter to the animator.
+  That split is what makes per layer animation possible without a second layout engine.
+- An element id is a global name. The motion overlay has its own ids for exactly that reason.
