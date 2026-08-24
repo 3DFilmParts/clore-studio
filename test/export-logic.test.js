@@ -24,7 +24,7 @@ function grab(name){
   }
   throw new Error("unbalanced: "+name);
 }
-const names=["allStillFormats","clean","sentences","systemsIn","bestSentences","autoSub","itemFor","subPool","subLineFor","wordsFor","photoWordsEdited","imagesFor","heroCountFor","postList","postOn","selectedPosts","totalPosts","fileName","stillFormats","outputFormats"];
+const names=["allStillFormats","headPool","headLineFor","clean","sentences","systemsIn","bestSentences","autoSub","itemFor","subPool","subLineFor","wordsFor","photoWordsEdited","imagesFor","heroCountFor","postList","postOn","selectedPosts","totalPosts","fileName","stillFormats","outputFormats"];
 const code=names.map(grab).join("\n");
 
 // stubs
@@ -203,6 +203,45 @@ CATALOG.bare={handle:'bare',title:'Bare',type:'',price:'',tags:[],facts:[],sents
 eq(subPool('bare'), [], "a product with no copy gives an empty pool");
 eq(subLineFor('bare',3), "", "and shuffling it is harmless");
 eq(typeof wordsFor('bare',2).headline, "string", "words still resolve for it");
+
+
+// ---- headline shuffle, and it must stay independent of the blurb ----
+CATALOG.headly={
+  handle:'headly', type:'Mount', price:'$35', tags:['Tilta'],
+  title:'DJI Ronin 4D Tilta Top Handle Cold Shoe Mount (Prototype)',
+  facts:[], sents:["A cold shoe that clamps to the Tilta top handle."],
+  images:['h1','h2']
+};
+S.items={};
+{
+  const hp=headPool('headly');
+  eq(hp[0], CATALOG.headly.title, "the untouched title is always the first option");
+  eq(hp.some(t=>/Prototype/.test(t)), true, "the full title keeps its bracketed aside");
+  eq(hp.some(t=>!/Prototype/.test(t)), true, "and a version without it is offered");
+  eq(hp.every(t=>t.split(/\s+/).length>=2), true, "no one word headlines");
+  eq(hp.every(t=>t.length<=70), true, "nothing too long to set");
+  eq(new Set(hp).size, hp.length, "no duplicates");
+  eq(hp.every(t=>CATALOG.headly.title.toLowerCase().includes(t.split(/\s+/)[0].toLowerCase())
+                 || CATALOG.headly.title.toLowerCase().includes(t.toLowerCase().slice(0,10))),
+     true, "every option is made out of his own title");
+
+  // shuffling one must not move the other
+  const before=wordsFor('headly',0);
+  S.items.headly=S.items.headly||{};
+  S.items.headly.headSeed=1;
+  const afterHead=wordsFor('headly',0);
+  eq(afterHead.headline!==before.headline, true, "a headline shuffle changes the headline");
+  eq(afterHead.sub===before.sub, true, "and leaves the blurb where it was");
+
+  S.items.headly.subSeed=1;
+  const afterSub=wordsFor('headly',0);
+  eq(afterSub.headline===afterHead.headline, true, "a blurb shuffle leaves the headline where it was");
+
+  // the headline does not drift photo to photo, a product name is a product name
+  eq(wordsFor('headly',0).headline, wordsFor('headly',1).headline,
+     "the headline is the same on every photo unless you change it");
+}
+eq(headLineFor('bare',2), null, "a product with no usable title offers nothing");
 
 console.log(fail? "\n"+fail+" FAILED" : "\nall green");
 process.exit(fail?1:0);
