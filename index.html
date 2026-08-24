@@ -521,6 +521,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border:none;border-ra
       <div id="rstage">
         <div id="canwrap"><canvas id="board"></canvas></div>
         <div id="stagebar">
+          <span class="stat" id="st-photo"></span>
           <span class="stat" id="st-fmt"></span>
           <span class="stat" id="st-look"></span>
           <span class="stat" id="overrun"></span>
@@ -675,7 +676,7 @@ var S = {
   items: {},                  // handle -> per item overrides
   base: null,                 // shared design settings
   reel: null,
-  ui: { rtab:'layout', tfil:'all', wordPhoto:'all' }
+  ui: { rtab:'layout', tfil:'all', wordPhoto:'all', previewHero:0 }
 };
 
 var DEFAULT_BASE = function(){
@@ -2421,6 +2422,8 @@ function updateFoot(){
   } else if(S.step===3){
     var h=activeHandle();
     bits.push('<b>'+(S.picked.indexOf(h)+1)+' of '+S.picked.length+'</b>');
+    var hc=(typeof heroCountFor==='function')?heroCountFor(h):1;
+    if(hc>1) bits.push('photo <b>'+((S.ui.previewHero||0)+1)+' of '+hc+'</b>');
     bits.push(templateById(S.template).name);
   } else {
     if(typeof MADE!=='undefined' && MADE && MADE.length){
@@ -2548,6 +2551,27 @@ function renderTemplates(){
 /* ================= 4. REFINE ================= */
 var _pvT, _pvJob=0;
 function schedulePreview(){ clearTimeout(_pvT); _pvT=setTimeout(drawPreview,60); }
+/* Steps between the posts of one product, sitting right under the picture so
+   the thing you change and the thing you look at are never far apart. */
+function drawPhotoStep(h,hero,heroN){
+  var sp=$('st-photo'); if(!sp) return;
+  if(heroN<2){ sp.style.display='none'; sp.innerHTML=''; return; }
+  sp.style.display='';
+  sp.innerHTML='<span style="display:inline-flex;align-items:center;gap:7px">'
+    +'<button class="chip sm" data-phstep="-1" aria-label="Previous photo">&#8249;</button>'
+    +'<b>Photo '+(hero+1)+' of '+heroN+'</b>'
+    +'<button class="chip sm" data-phstep="1" aria-label="Next photo">&#8250;</button></span>';
+  $$('[data-phstep]').forEach(function(b){
+    b.onclick=function(){
+      var n=heroN, v=(S.ui.previewHero||0)+(+b.dataset.phstep);
+      S.ui.previewHero=((v%n)+n)%n;
+      /* Follow it in the words editor too, so what you type lands on what you
+         are looking at rather than on a photo somewhere off screen. */
+      if(S.ui.wordPhoto!=='all') S.ui.wordPhoto=S.ui.previewHero;
+      renderRefine(); schedulePreview(); updateFoot(); persist();
+    };
+  });
+}
 async function drawPreview(){
   var h=activeHandle(); if(!h) return;
   var job=++_pvJob;
@@ -2556,8 +2580,15 @@ async function drawPreview(){
   var fmt=S.previewFmt || stillFormats()[0] || 'portrait';
   if(stillFormats().indexOf(fmt)<0) fmt=stillFormats()[0]||'portrait';
   var cv=$('board'); if(!cv) return;
-  var P=await renderTo(cv,{handle:h,format:fmt,scale:0.62});
+  /* One product can make several posts, one per photo. The preview used to
+     draw the first and only ever the first, so editing the words of photo
+     three meant working blind. It draws whichever post is selected now. */
+  var heroN=(typeof heroCountFor==='function')?heroCountFor(h):1;
+  var hero=Math.max(0,Math.min(S.ui.previewHero||0, heroN-1));
+  if(hero!==S.ui.previewHero) S.ui.previewHero=hero;
+  var P=await renderTo(cv,{handle:h,format:fmt,scale:0.62,hero:hero});
   if(job!==_pvJob) return;
+  drawPhotoStep(h,hero,heroN);
   sizeBoard(cv,fmt);
   var F=FORMATS[fmt];
   $('st-fmt').innerHTML='<b>'+F.name+'</b> '+F.tag;
@@ -2587,7 +2618,7 @@ async function drawQueue(){
       return '<button class="qth'+(i===S.activeIdx?' on':'')+'" data-i="'+i+'"><canvas id="qth-'+i+'"></canvas></button>';
     }).join('');
     $$('#queuebar .qth').forEach(function(b){
-      b.onclick=function(){ S.activeIdx=+b.dataset.i; renderRefine(); schedulePreview(); updateFoot(); persist(); };
+      b.onclick=function(){ S.activeIdx=+b.dataset.i; S.ui.previewHero=0; renderRefine(); schedulePreview(); updateFoot(); persist(); };
     });
     var job=++_qJob, fmt=stillFormats()[0]||'portrait';
     for(var i=0;i<S.picked.length;i++){
@@ -2797,7 +2828,10 @@ function panelParts(){
     +'<div class="hint">Automatic reads the pixels behind the mark and picks whichever one you will actually see. A white mark on a white product shot disappears, so this checks first.</div>');
   var wPhotos=imagesFor(it), wSel=S.ui.wordPhoto;
   if(wSel!=='all' && !(wSel>=0 && wSel<wPhotos.length)) wSel=S.ui.wordPhoto='all';
-  var wW = wSel==='all' ? {headline:it.headline, sub:it.sub} : wordsFor(h,wSel);
+  /* Always the words of the post on screen, whichever scope is selected.
+     Showing the shared default while the picture showed a cycled line was the
+     quickest way to make someone think the shuffle had not worked. */
+  var wW = wordsFor(h, wSel==='all' ? (S.ui.previewHero||0) : wSel);
   var wStrip = (wPhotos.length>1)
     ? ('<div class="row wrap" style="margin-bottom:8px">'
        +'<button class="chip sm'+(wSel==='all'?' on':'')+'" data-wphoto="all">Every photo</button>'
@@ -3206,10 +3240,10 @@ function bindPanel(){
      tab on every tap, which is what made this unusable one handed. */
   function afterShuffle(){
     var w=S.ui.wordPhoto;
-    var got=wordsFor(h, w==='all' ? 0 : w);
+    var got=wordsFor(h, w==='all' ? (S.ui.previewHero||0) : w);
     var hs=$('t-head'), sb=$('t-sub');
-    if(hs) hs.value = w==='all' ? itemFor(h).headline : got.headline;
-    if(sb) sb.value = w==='all' ? itemFor(h).sub      : got.sub;
+    if(hs) hs.value = got.headline;
+    if(sb) sb.value = got.sub;
     var star=document.querySelector('[data-wphoto="'+w+'"] .sl');
     if(star && w!=='all') star.textContent=(w+1)+(photoWordsEdited(h,w)?'*':'');
     schedulePreview(); persist();
@@ -3247,7 +3281,8 @@ function bindPanel(){
     b.onclick=function(){
       var v=b.dataset.wphoto;
       S.ui.wordPhoto = (v==='all') ? 'all' : (+v);
-      renderRefine(); persist();
+      if(v!=='all') S.ui.previewHero=+v;   /* show the one being written for */
+      renderRefine(); schedulePreview(); updateFoot(); persist();
     };
   });
   var wc=$('t-wclear');
