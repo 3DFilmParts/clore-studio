@@ -24,7 +24,7 @@ function grab(name){
   }
   throw new Error("unbalanced: "+name);
 }
-const names=["allStillFormats","imagesFor","heroCountFor","postList","postOn","selectedPosts","totalPosts","fileName","stillFormats","outputFormats"];
+const names=["allStillFormats","clean","sentences","systemsIn","bestSentences","autoSub","itemFor","subPool","subLineFor","wordsFor","photoWordsEdited","imagesFor","heroCountFor","postList","postOn","selectedPosts","totalPosts","fileName","stillFormats","outputFormats"];
 const code=names.map(grab).join("\n");
 
 // stubs
@@ -37,11 +37,19 @@ var FORMATS=(function(){
   return eval("("+m[0].replace(/^var FORMATS = /,"").replace(/;$/,"")+")");
 })();
 var CATALOG={
-  snapmark:{handle:'snapmark',images:['a1','a2','a3','a4','a5','a6','a7','a8','a9','a10','a11','a12']},
-  tmarker :{handle:'tmarker', images:['b1','b2','b3']},
-  onepic  :{handle:'onepic',  images:['c1']}
+  snapmark:{handle:'snapmark',title:'Snapmark',type:'Clapper',price:'$79',tags:[],facts:[],sents:[],
+            images:['a1','a2','a3','a4','a5','a6','a7','a8','a9','a10','a11','a12']},
+  tmarker :{handle:'tmarker', title:'T Marker',type:'Marker',price:'$6.50',tags:[],facts:[],sents:[],
+            images:['b1','b2','b3']},
+  onepic  :{handle:'onepic',  title:'One Pic',type:'Other',price:'$1',tags:[],facts:[],sents:[],
+            images:['c1']}
 };
-function itemFor(h){ return {product:CATALOG[h], headline:h.toUpperCase(), imgSel:(S.items[h]||{}).imgSel}; }
+function productByHandle(h){ return CATALOG[h]||null; }
+var SUB_MAX=92;
+var SYSTEMS=(function(){
+  const m=src.match(/var SYSTEMS = \[[\s\S]*?\n\];/);
+  return eval("("+m[0].replace(/^var SYSTEMS = /,"").replace(/;$/,"")+")");
+})();
 function slug(x){ return String(x).toLowerCase().replace(/[^a-z0-9]+/g,'-'); }
 eval(code);
 
@@ -127,6 +135,74 @@ eq(stillFormats(), ['portrait'], "an empty override falls back instead of making
 S.export.fmts=null;
 eq(allStillFormats().indexOf('reel'), -1, "reel is not offered as a still size");
 eq(allStillFormats().length, 5, "five still sizes are offered");
+
+
+// ---- the line that sits inside the artwork ----
+CATALOG.blurb={
+  handle:'blurb', title:'Tilta Boulder Film Cart Tumbler Holder', type:'Tumbler', price:'$49',
+  tags:['Tilta','made in melbourne'],
+  facts:['Holds a 32oz bottle.','Bolts on with two 1/4-20 screws.'],
+  sents:[
+    "Keep your drink secure and within arm's reach on even the busiest productions.",
+    "It bolts straight onto the Tilta Boulder cart without any drilling.",
+    "Short.",
+    "This is a deliberately very long sentence written so that it comfortably exceeds the ninety two character ceiling that the artwork line has to respect."
+  ]
+};
+S.items={}; S.picked=['blurb'];
+{
+  const pool=subPool('blurb');
+  eq(pool.every(l=>l.length<=SUB_MAX), true, "no candidate is too long for the artwork line");
+  eq(pool.every(l=>l.length>=8), true, "and none is a stray fragment");
+  eq(pool.some(l=>/\.\.\.|\u2026/.test(l)), false, "nothing was trimmed with an ellipsis");
+  eq(pool.includes("Short."), false, "the too short line is left out");
+  eq(pool.some(l=>l.length>SUB_MAX), false, "the too long line is left out rather than cut");
+  eq(new Set(pool).size, pool.length, "no duplicates in the pool");
+  eq(pool.includes("Fits Tilta."), true, "a system named in the title becomes a candidate");
+  eq(pool.includes("Made in Melbourne."), true, "the made in tag becomes a candidate");
+  eq(pool.length>=4, true, "there is something to shuffle through");
+
+  // cycling, never the same twice running
+  const seq=[0,1,2,3,4,5].map(i=>subLineFor('blurb',i));
+  eq(seq.every((v,i)=> i===0 || v!==seq[i-1]), true, "consecutive shuffles never repeat");
+}
+
+// ---- per photo words ----
+S.items.blurb={imgSel:[0,1,2]};
+{
+  const a=wordsFor('blurb',0), b=wordsFor('blurb',1), c=wordsFor('blurb',2);
+  eq(a.sub!==b.sub && b.sub!==c.sub, true, "each photo gets a different line by default");
+  eq(a.headline, CATALOG.blurb.title, "the headline defaults to the product title");
+
+  // a line written for the product applies to every photo
+  S.items.blurb.sub="One line for all of them.";
+  eq([0,1,2].map(i=>wordsFor('blurb',i).sub),
+     ["One line for all of them.","One line for all of them.","One line for all of them."],
+     "a line typed for the product wins on every photo");
+
+  // a line written for one photo beats that
+  S.items.blurb.words={1:{sub:"Just this one."}};
+  eq(wordsFor('blurb',1).sub, "Just this one.", "a line typed for one photo wins over the product line");
+  eq(wordsFor('blurb',0).sub, "One line for all of them.", "and leaves the other photos alone");
+  eq(photoWordsEdited('blurb',1), true, "the edited photo is marked");
+  eq(photoWordsEdited('blurb',0), false, "an untouched photo is not");
+
+  S.items.blurb.words[2]={headline:"A different title"};
+  eq(wordsFor('blurb',2).headline, "A different title", "a headline can differ per photo");
+  eq(wordsFor('blurb',0).headline, CATALOG.blurb.title, "without touching the others");
+
+  // clearing a photo returns it to the shared line
+  delete S.items.blurb.words[1];
+  eq(wordsFor('blurb',1).sub, "One line for all of them.", "clearing a photo falls back to the product line");
+  delete S.items.blurb.sub;
+  eq(wordsFor('blurb',1).sub!==wordsFor('blurb',0).sub, true, "and clearing that returns it to cycling");
+}
+
+// a product with no usable copy must not throw
+CATALOG.bare={handle:'bare',title:'Bare',type:'',price:'',tags:[],facts:[],sents:[]};
+eq(subPool('bare'), [], "a product with no copy gives an empty pool");
+eq(subLineFor('bare',3), "", "and shuffling it is harmless");
+eq(typeof wordsFor('bare',2).headline, "string", "words still resolve for it");
 
 console.log(fail? "\n"+fail+" FAILED" : "\nall green");
 process.exit(fail?1:0);

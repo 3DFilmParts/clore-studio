@@ -675,7 +675,7 @@ var S = {
   items: {},                  // handle -> per item overrides
   base: null,                 // shared design settings
   reel: null,
-  ui: { rtab:'layout', tfil:'all' }
+  ui: { rtab:'layout', tfil:'all', wordPhoto:'all' }
 };
 
 var DEFAULT_BASE = function(){
@@ -2088,6 +2088,11 @@ async function renderTo(canvas, opts){
 
   var handle = opts.handle;
   var item = opts.item || itemFor(handle);
+  /* Resolved per photo so each post in a run carries its own line. */
+  if(!opts.item && typeof wordsFor==='function'){
+    var W=wordsFor(handle, opts.hero||0);
+    item = Object.assign({}, item, {headline:W.headline, sub:W.sub});
+  }
   var cfg  = opts.cfg  || cfgFor(handle);
   var tpl  = templateById(opts.template||S.template);
   var pal  = palette(cfg);
@@ -2789,9 +2794,29 @@ function panelParts(){
   out+=grp('Logo colour',null,
     chipsHTML([['auto','Automatic'],['white','White'],['ink','Ink']],getCfg('logoColour')||'auto','data-logoc')
     +'<div class="hint">Automatic reads the pixels behind the mark and picks whichever one you will actually see. A white mark on a white product shot disappears, so this checks first.</div>');
-  out+=grp('Words on this post',null,
-    '<div class="lbl">Headline</div><textarea id="t-head" rows="2">'+esc(it.headline)+'</textarea>'
-    +'<div class="lbl" style="margin-top:9px">Description line</div><textarea id="t-sub" rows="2" placeholder="Taken from your store copy">'+esc(it.sub)+'</textarea>'
+  var wPhotos=imagesFor(it), wSel=S.ui.wordPhoto;
+  if(wSel!=='all' && !(wSel>=0 && wSel<wPhotos.length)) wSel=S.ui.wordPhoto='all';
+  var wW = wSel==='all' ? {headline:it.headline, sub:it.sub} : wordsFor(h,wSel);
+  var wStrip = (wPhotos.length>1)
+    ? ('<div class="row wrap" style="margin-bottom:8px">'
+       +'<button class="chip sm'+(wSel==='all'?' on':'')+'" data-wphoto="all">Every photo</button>'
+       +'<button class="chip sm" id="t-wclear"'+(wSel==='all'?' style="display:none"':'')+'>Back to automatic</button>'
+       +'</div>'
+       +'<div class="imgs">'+wPhotos.map(function(src,i){
+           return '<div class="ith'+(wSel===i?' on':'')+'" data-wphoto="'+i+'">'
+             +'<img loading="lazy" src="'+esc(cdn(src,160))+'" alt="">'
+             +'<span class="sl">'+(i+1)+(photoWordsEdited(h,i)?'*':'')+'</span></div>';
+         }).join('')+'</div>'
+       +'<div class="hint">Every photo takes a different line out of your store copy on its own, so a run does not repeat itself. Tap a photo to write that one by hand. A star means you have.</div>')
+    : '';
+  out+=grp('Words on this post', wSel==='all'?null:('Photo '+(wSel+1)),
+    wStrip
+    +'<div class="lbl">Headline</div><textarea id="t-head" rows="2">'+esc(wW.headline)+'</textarea>'
+    +'<div class="lbl" style="margin-top:9px">Description line</div><textarea id="t-sub" rows="2" placeholder="Taken from your store copy">'+esc(wW.sub)+'</textarea>'
+    +'<div class="row wrap" style="margin-top:7px">'
+    +'<button class="chip sm" id="t-newsub">New blurb</button>'
+    +'<span class="v" id="t-subpool">'+subPool(h).length+' to draw from</span></div>'
+    +'<div class="hint">New blurb reshuffles the line that sits in the artwork itself, out of your own store copy, and never lands on the same one twice running. Anything too long to sit on one line is left out rather than cut short.</div>'
     +'<div class="lbl" style="margin-top:9px">Price</div><input type="text" id="t-price" value="'+esc(it.price)+'">'
     +'<div class="row wrap" style="margin-top:8px">'
     +'<button class="chip sm" data-txt="resub">Another line from the store</button>'
@@ -2909,6 +2934,77 @@ function applyPreset(p){
   S.base=deepMerge(DEFAULT_BASE(), p.base||{});
   renderRefine(); schedulePreview(); updateFoot(); persist();
   toast(p.name+' applied');
+}
+
+/* ================= THE LINE INSIDE THE ARTWORK =================
+   The caption lives under the post. This is the line that sits in the picture
+   itself, under the headline, and it is read at arm's length in one glance, so
+   it is one short sentence and never a paragraph.
+
+   Two house rules do the work here. Nothing is invented: every candidate is a
+   sentence Daniel already wrote on the store, a fact off the product, or a
+   recombination of things the product itself states. And nothing is cut off:
+   a line too long to sit in the artwork is left out of the pool rather than
+   trimmed with an ellipsis. */
+var SUB_MAX = 92;
+
+function subPool(handle){
+  var it=itemFor(handle), p=it.product, out=[], seen={};
+  /* min guards against fragments thrown off by sentence splitting. Lines we
+     compose ourselves are known good, so they are allowed to be short: "Fits
+     Tilta." is eleven characters and is a perfectly good line. */
+  function put(x,min){
+    var v=clean(x);
+    if(!v) return;
+    if(v.length<min || v.length>SUB_MAX) return;  /* decline it, never trim it */
+    var k=v.toLowerCase();
+    if(seen[k]) return;
+    seen[k]=1; out.push(v);
+  }
+  function add(x){ put(x,14); }
+  function addMade(x){ put(x,4); }
+  bestSentences(p).forEach(add);
+  (p.facts||[]).forEach(add);
+  var sys=systemsIn(p);
+  if(sys.length===1) addMade('Fits '+sys[0]+'.');
+  else if(sys.length>1) addMade('Fits '+sys[0]+' and '+sys[1]+'.');
+  var tg=(p.tags||[]).join(' ').toLowerCase();
+  if(/made in melbourne/.test(tg)) addMade('Made in Melbourne.');
+  else if(/made in australia/.test(tg)) addMade('Made in Australia.');
+  return out;
+}
+
+/* Walked in step rather than picked at random, which is the only way to
+   promise you never see the same line twice in a row. */
+function subLineFor(handle, seed){
+  var pool=subPool(handle);
+  if(!pool.length) return '';
+  var n=pool.length, i=((seed||0)%n+n)%n;
+  return pool[i];
+}
+
+/* The words for one post. A product that makes six posts should not read the
+   same six times, so with nothing written by hand each photo takes the next
+   line off the pool. Anything typed wins: a line written for one photo beats a
+   line written for the product, which beats the automatic pick. */
+function wordsFor(handle, hero){
+  var it=itemFor(handle), ov=it.ov, h=hero|0;
+  var per=(ov.words||{})[h]||{};
+  var sub;
+  if(per.sub!=null)      sub=per.sub;
+  else if(ov.sub!=null)  sub=ov.sub;
+  else {
+    var pool=subPool(handle);
+    sub = pool.length ? pool[(((ov.subSeed||0)+h)%pool.length+pool.length)%pool.length] : it.sub;
+  }
+  return {
+    headline: per.headline!=null ? per.headline : it.headline,
+    sub: sub
+  };
+}
+function photoWordsEdited(handle,i){
+  var w=((S.items[handle]||{}).words||{})[i];
+  return !!(w && (w.headline!=null || w.sub!=null));
 }
 
 /* ================= CAPTION ================= */
@@ -3049,9 +3145,18 @@ function bindPanel(){
   };
 
   /* words */
+  /* Typing lands on the product, or on one photo, depending on which the strip
+     above has selected. Same field either way, so there is nothing to learn. */
+  var wTarget=function(){
+    var ov=S.items[h]||(S.items[h]={});
+    var w=S.ui.wordPhoto;
+    if(w==='all') return ov;
+    ov.words=ov.words||{};
+    return ov.words[w]=ov.words[w]||{};
+  };
   var bindText=function(id,key){
     var el=$(id); if(!el) return;
-    el.oninput=function(){ (S.items[h]||(S.items[h]={}))[key]=el.value; schedulePreview(); persist(); };
+    el.oninput=function(){ wTarget()[key]=el.value; schedulePreview(); persist(); };
   };
   bindText('t-head','headline'); bindText('t-sub','sub'); bindText('t-price','price');
   var bindCfgText=function(id,path){
@@ -3060,6 +3165,35 @@ function bindPanel(){
   };
   bindCfgText('t-badge','text.badge'); bindCfgText('t-cta','text.cta');
   bindCfgText('t-site','text.site'); bindCfgText('t-handle','text.handle');
+  var nsb=$('t-newsub');
+  if(nsb) nsb.onclick=function(){
+    var ov=S.items[h]||(S.items[h]={}), pool=subPool(h);
+    if(!pool.length){ toast('No store copy on this product to draw from'); return; }
+    if(pool.length===1) toast('Only one line short enough on this product');
+    if(S.ui.wordPhoto==='all'){
+      /* Moves the whole run along one, so every photo still differs. */
+      ov.subSeed=(ov.subSeed||0)+1; ov.sub=null;
+    } else {
+      var i=S.ui.wordPhoto;
+      ov.words=ov.words||{}; ov.words[i]=ov.words[i]||{};
+      ov.words[i]._seed=(ov.words[i]._seed||i)+1;
+      ov.words[i].sub=subLineFor(h,ov.words[i]._seed);
+    }
+    renderRefine(); schedulePreview(); persist();
+  };
+  $$('[data-wphoto]').forEach(function(b){
+    b.onclick=function(){
+      var v=b.dataset.wphoto;
+      S.ui.wordPhoto = (v==='all') ? 'all' : (+v);
+      renderRefine(); persist();
+    };
+  });
+  var wc=$('t-wclear');
+  if(wc) wc.onclick=function(){
+    var ov=S.items[h]||(S.items[h]={});
+    if(S.ui.wordPhoto!=='all' && ov.words) delete ov.words[S.ui.wordPhoto];
+    renderRefine(); schedulePreview(); persist();
+  };
   on('[data-txt]','onclick',function(el){
     var ov=S.items[h]||(S.items[h]={}), p=productByHandle(h);
     if(el.dataset.txt==='reset'){ ov.headline=null; ov.sub=null; ov.price=null; }
