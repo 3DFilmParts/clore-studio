@@ -24,7 +24,7 @@ function grab(name){
   }
   throw new Error("unbalanced: "+name);
 }
-const names=["allStillFormats","headPool","headLineFor","clean","sentences","systemsIn","bestSentences","autoSub","itemFor","subPool","subLineFor","wordsFor","photoWordsEdited","imagesFor","heroCountFor","postList","postOn","selectedPosts","totalPosts","fileName","stillFormats","outputFormats"];
+const names=["preelCfg","beatsForDur","preelPlan","allStillFormats","headPool","headLineFor","clean","sentences","systemsIn","bestSentences","autoSub","itemFor","subPool","subLineFor","wordsFor","photoWordsEdited","imagesFor","heroCountFor","postList","postOn","selectedPosts","totalPosts","fileName","stillFormats","outputFormats"];
 const code=names.map(grab).join("\n");
 
 // stubs
@@ -242,6 +242,53 @@ S.items={};
      "the headline is the same on every photo unless you change it");
 }
 eq(headLineFor('bare',2), null, "a product with no usable title offers nothing");
+
+
+// ---- photo reel: who is on screen when, and who is talking ----
+S.picked=['snapmark']; S.activeIdx=0; S.items={};
+function activeHandle(){ return S.picked[S.activeIdx]; }
+S.items.snapmark={imgSel:[0,1,2,3,4,5]};   // six photos picked
+
+eq([6,7,10,12,15,20].map(beatsForDur), [1,1,2,2,3,3], "length picks how often the words come up");
+
+S.preel={dur:10,beats:2,fmt:'story',move:'in',moveAmt:10,cross:0.5};
+{
+  const p=preelPlan('snapmark');
+  eq(p.photos, 6, "one slide per picked photo");
+  eq(p.slides.length, 6, "and the plan has that many");
+  eq(+p.slides[p.slides.length-1].t1.toFixed(3), 10, "the last slide ends exactly on the duration");
+  eq(p.slides.every((s,i)=> i===0 || s.t0===p.slides[i-1].t1), true, "no gap and no overlap between slides");
+  eq(p.slides.filter(s=>s.text).length, 2, "two beats means the words come up twice");
+  eq(p.slides[0].text, true, "it opens by saying what it is");
+  eq(p.slides[5].text, true, "and closes the same way");
+  eq(p.slides.filter(s=>s.text).map(s=>s.beat), [0,1], "each appearance is numbered so it can say something different");
+}
+
+S.preel.beats=3;
+{
+  const t=preelPlan('snapmark').slides.filter(s=>s.text).map(s=>s.i);
+  eq(t, [0,3,5], "three beats spread across the run");
+}
+S.preel.beats=1;
+{
+  const p=preelPlan('snapmark');
+  eq(p.slides.filter(s=>s.text).map(s=>s.i), [0], "once means once, at the top");
+}
+// more beats than photos must not invent slides or repeat one
+S.preel.beats=3; S.items.snapmark={imgSel:[0,1]};
+{
+  const p=preelPlan('snapmark');
+  eq(p.photos, 2, "two photos");
+  eq(p.slides.filter(s=>s.text).length, 2, "beats are capped at the number of photos");
+}
+// a single photo still produces a valid, whole run
+S.items.snapmark={imgSel:[0]}; S.preel.dur=6; S.preel.beats=2;
+{
+  const p=preelPlan('snapmark');
+  eq(p.slides.length, 1, "one photo, one slide");
+  eq(p.slides[0].t0===0 && +p.slides[0].t1.toFixed(3)===6, true, "and it fills the whole six seconds");
+  eq(p.slides[0].text, true, "with the words on it");
+}
 
 console.log(fail? "\n"+fail+" FAILED" : "\nall green");
 process.exit(fail?1:0);

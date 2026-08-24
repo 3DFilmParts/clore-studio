@@ -3918,6 +3918,106 @@ function reelCfg(){
   return S.reel;
 }
 
+/* ================= PHOTO REEL =================
+   A reel made out of the product photos themselves, with no footage needed.
+   Pick a length, the photos cycle through it, and the words come up a set
+   number of times along the way rather than sitting there the whole run.
+
+   Every frame is one of the still designs, rendered by the same renderer as
+   everything else, so a reel cannot drift away from what the posts look like.
+   Slides that carry no words are the same design with the text parts hidden,
+   which is why the photo, logo and badge stay put while the words come and go.
+   ============================================== */
+function preelCfg(){
+  if(!S.preel) S.preel = { dur:10, beats:2, fmt:'story', move:'in', moveAmt:10, cross:0.5 };
+  return S.preel;
+}
+/* What he described: a short one gets one set of words, a middle one two, a
+   long one three. Set by hand afterwards if you disagree with it. */
+function beatsForDur(d){ return d<8 ? 1 : (d<13 ? 2 : 3); }
+
+/* Pure, and therefore testable: who is on screen when, and who is talking. */
+function preelPlan(handle){
+  var c=preelCfg();
+  var photos=handle?imagesFor(itemFor(handle)):[];
+  var n=Math.max(1,photos.length);
+  var beats=Math.max(1,Math.min(c.beats|0||1,n));
+  /* The words land on the first slide, the last, and spread evenly between,
+     so a reel opens by saying what it is and closes the same way. */
+  var at={};
+  for(var b=0;b<beats;b++){
+    at[ beats===1 ? 0 : Math.round(b*(n-1)/(beats-1)) ] = b;
+  }
+  var per=c.dur/n, slides=[];
+  for(var i=0;i<n;i++){
+    var has=Object.prototype.hasOwnProperty.call(at,i);
+    slides.push({ i:i, hero:i, t0:+(i*per).toFixed(4), t1:+((i+1)*per).toFixed(4),
+                  text:has, beat:has?at[i]:-1 });
+  }
+  return { dur:c.dur, per:per, beats:beats, photos:n, slides:slides };
+}
+
+async function buildPreel(){
+  var h=activeHandle();
+  if(!h){ toast('Pick a product first'); return null; }
+  var c=preelCfg(), plan=preelPlan(h);
+  if(plan.photos<2) toast('Only one photo picked, add more in Images');
+  busy(true,'Building the reel','0 of '+plan.slides.length);
+  await ensureFonts();
+  var base=cfgFor(h);
+  var quiet=JSON.parse(JSON.stringify(base));
+  quiet.show=quiet.show||{};
+  ['headline','sub','rule','price'].forEach(function(k){ quiet.show[k]=false; });
+  var frames=[], it=itemFor(h);
+  for(var i=0;i<plan.slides.length;i++){
+    var sl=plan.slides[i], cv=document.createElement('canvas');
+    var opts={handle:h, format:c.fmt, scale:1, hero:sl.hero};
+    if(sl.text){
+      /* A different line on each appearance, so three beats do not say the
+         same thing three times. */
+      var w=wordsFor(h,sl.hero);
+      opts.item=Object.assign({},it,{headline:w.headline, sub:(subLineFor(h,sl.beat)||w.sub)});
+      opts.cfg=base;
+    } else {
+      opts.cfg=quiet;
+    }
+    try{ await renderTo(cv,opts); frames.push(cv); }
+    catch(e){ console.warn('reel slide failed',i,e); frames.push(null); }
+    busy(true,'Building the reel',(i+1)+' of '+plan.slides.length);
+  }
+  busy(false);
+  M.preel={ plan:plan, frames:frames, fmt:c.fmt };
+  M.dur=c.dur;
+  return M.preel;
+}
+
+async function drawPreel(cv,t){
+  if(!M.preel){ return; }
+  var P=M.preel, c=preelCfg(), F=FORMATS[P.fmt]||FORMATS.story;
+  var W=F.w, H=F.h, prev=!M.recording;
+  var sc = prev ? Math.min(1, 620/H) : 1;
+  cv.width=Math.round(W*sc); cv.height=Math.round(H*sc);
+  var ctx=cv.getContext('2d');
+  ctx.save(); ctx.scale(sc,sc);
+  ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H);
+  var n=P.frames.length, per=Math.max(0.001,P.plan.per);
+  var idx=Math.max(0,Math.min(n-1, Math.floor(t/per)));
+  var local=Math.max(0,Math.min(1,(t-idx*per)/per));
+  var xf=Math.max(0,Math.min(0.9, (c.cross||0)/per));
+  function paint(i,alpha,p){
+    var f=P.frames[i]; if(!f) return;
+    var k=(c.moveAmt||0)/100;
+    var z = c.move==='none' ? 1 : (c.move==='in' ? 1+k*p : 1+k*(1-p));
+    var dw=W*z, dh=H*z;
+    ctx.globalAlpha=alpha;
+    ctx.drawImage(f,(W-dw)/2,(H-dh)/2,dw,dh);
+    ctx.globalAlpha=1;
+  }
+  paint(idx,1,local);
+  if(xf>0 && local>1-xf && idx<n-1) paint(idx+1,(local-(1-xf))/xf,0);
+  ctx.restore();
+}
+
 /* ---------- open ---------- */
 function openMotion(mode){
   motionCfg(); reelCfg();
@@ -3934,7 +4034,8 @@ function openMotion(mode){
    +'<div class="brandbox"><div class="mk"></div><b>MOTION</b><span id="m-sub"></span></div>'
    +'<div class="spacer"></div>'
    +'<button class="tbtn" id="m-mode-anim">Animated post</button>'
-   +'<button class="tbtn" id="m-mode-reel">Reel</button>'
+   +'<button class="tbtn" id="m-mode-photos">Photo reel</button>'
+   +'<button class="tbtn" id="m-mode-reel">Reel from a clip</button>'
    +'<button class="tbtn go" id="m-close">Done</button></div>'
    +'<div class="splitbody">'
    +'<div class="stagebox" id="m-stage"><div class="canwrap"><canvas id="mboard"></canvas></div>'
@@ -3945,15 +4046,18 @@ function openMotion(mode){
    +'<div class="panelbox"><div id="m-body" style="flex:1 1 auto;overflow-y:auto;padding:14px"></div></div></div>';
   $('m-close').onclick=closeMotion;
   $('m-mode-anim').onclick=function(){ M.mode='anim'; stopMotion(); renderMotionPanel(); buildAnim(); };
+  $('m-mode-photos').onclick=function(){ M.mode='photos'; stopMotion(); renderMotionPanel(); buildPreel().then(function(){ drawMotion(0); }); };
   $('m-mode-reel').onclick=function(){ M.mode='reel'; stopMotion(); renderMotionPanel(); drawMotion(0); };
   $('m-play').onclick=togglePlay;
   $('m-scrub').oninput=function(){
     stopMotion();
-    var d=M.mode==='anim'? motionTotal() : (M.dur||0);
+    var d=M.mode==='anim'? motionTotal() : (M.mode==='photos'? preelCfg().dur : (M.dur||0));
     drawMotion(($('m-scrub').value/1000)*d);
   };
   renderMotionPanel();
-  if(M.mode==='anim') buildAnim(); else drawMotion(0);
+  if(M.mode==='anim') buildAnim();
+  else if(M.mode==='photos') buildPreel().then(function(){ drawMotion(0); });
+  else drawMotion(0);
 }
 function closeMotion(){ stopMotion(); M.open=false; var el=$('motionroot'); if(el) el.style.display='none'; }
 function motionTotal(){ var d=motionCfg(); return d.total + d.holdEnd; }
@@ -3983,6 +4087,7 @@ function layerCfgFor(name){
 async function drawMotion(t){
   var cv=$('mboard'); if(!cv) return;
   if(M.mode==='reel'){ await drawReelFrame(cv,t); return; }
+  if(M.mode==='photos'){ await drawPreel(cv,t); return; }
   var d=motionCfg(), F=FORMATS[d.fmt]||FORMATS.story;
   var W=F.w,H=F.h, prev=!M.recording;
   var scale = prev ? Math.min(1, 620/H) : 1;
@@ -4146,7 +4251,7 @@ function togglePlay(){
   var loop=function(){
     if(!M.playing) return;
     var t = M.mode==='reel' && M.video ? M.video.currentTime : (performance.now()-t0)/1000;
-    var end = M.mode==='reel' ? (M.dur||0) : motionTotal();
+    var end = M.mode==='reel' ? (M.dur||0) : (M.mode==='photos' ? preelCfg().dur : motionTotal());
     drawMotion(t);
     var sc=$('m-scrub'); if(sc) sc.value=Math.round((t/Math.max(0.1,end))*1000);
     if(t>=end-0.02){ stopMotion(); drawMotion(end); return; }
@@ -4170,10 +4275,52 @@ function renderMotionPanel(){
   var el=$('m-body'); if(!el) return;
   $('m-mode-anim').className = 'tbtn'+(M.mode==='anim'?' go':'');
   $('m-mode-reel').className = 'tbtn'+(M.mode==='reel'?' go':'');
-  $('m-sub').textContent = M.mode==='anim' ? 'animated post' : 'reel 1080 x 1920';
-  el.innerHTML = M.mode==='anim' ? motionPanelAnim() : motionPanelReel();
+  var mp=$('m-mode-photos'); if(mp) mp.className='tbtn'+(M.mode==='photos'?' go':'');
+  $('m-sub').textContent = M.mode==='anim' ? 'animated post'
+    : (M.mode==='photos' ? ('photo reel '+preelCfg().dur+'s') : 'reel 1080 x 1920');
+  el.innerHTML = M.mode==='anim' ? motionPanelAnim()
+    : (M.mode==='photos' ? motionPanelPhotos() : motionPanelReel());
   bindMotionPanel();
   el.scrollTop=0;
+}
+
+function motionPanelPhotos(){
+  var c=preelCfg(), h=activeHandle();
+  var plan=preelPlan(h);
+  var out='';
+  out+=grp('Size', FORMATS[c.fmt].tag,
+    chipsHTML(['story','portrait','square'].map(function(f){return [f,FORMATS[f].name];}),c.fmt,'data-pfmt'));
+  out+=grp('How long',null,
+    chipsHTML([['6','6s'],['7','7s'],['10','10s'],['15','15s'],['20','20s']],String(c.dur),'data-pdur')
+    +'<div class="hint">Choosing a length also sets how many times the words come up. Change that below if you would rather.</div>');
+  out+=grp('The words come up', c.beats===1?'once':(c.beats===2?'twice':c.beats+' times'),
+    chipsHTML([['1','Once'],['2','Twice'],['3','Three times']],String(c.beats),'data-pbeats')
+    +'<div class="hint">In between, the same design runs with the words hidden, so the photo carries it and the words land rather than sit there the whole way.</div>');
+  out+=grp('Photo move',null,
+    chipsHTML([['none','Still'],['in','Push in'],['out','Pull out']],c.move,'data-pmove')
+    +'<div class="row wrap" style="margin-top:8px">'
+    +chipsHTML([['6','Gentle'],['10','Medium'],['18','Strong']],String(c.moveAmt),'data-pamt')
+    +'</div>');
+  out+=grp('Between photos',null,
+    chipsHTML([['0','Cut'],['0.3','Quick fade'],['0.5','Fade'],['0.9','Slow fade']],String(c.cross),'data-pcross'));
+
+  var lines = plan.slides.map(function(sl){
+    return '<div class="row" style="justify-content:space-between;padding:4px 0">'
+      +'<span>Photo '+(sl.i+1)+'</span>'
+      +'<span class="v">'+sl.t0.toFixed(1)+'s to '+sl.t1.toFixed(1)+'s'
+      +(sl.text?' &middot; words':'')+'</span></div>';
+  }).join('');
+  out+=grp('What it will do', plan.photos+' photo'+(plan.photos===1?'':'s'),
+    (plan.photos<2
+      ? '<div class="card" style="border-color:#5A3A1A;background:#1E1712"><div class="hint" style="margin:0">Only one photo is picked for this product. Go back to Refine, open Images, and tap a few more. The reel cycles through whatever is picked there.</div></div>'
+      : '<div class="card">'+lines+'</div>')
+    +'<div class="row wrap" style="margin-top:9px">'
+    +'<button class="chip" id="m-pbuild" style="flex:1 1 auto;justify-content:center">Build the reel</button></div>'
+    +'<div class="hint">Build it first, then Play to watch it, then Export video to record it.</div>');
+  out+=grp('Export',null,
+    '<button class="chip" id="m-rec" style="width:100%;justify-content:center">Export video</button>'
+    +'<div class="hint">It records by playing through once in real time, so a 15 second reel takes 15 seconds. Leave it alone while it runs.</div>');
+  return out;
 }
 
 /* ---------- animated post ---------- */
@@ -4283,7 +4430,20 @@ function motionPanelReel(){
 }
 
 /* ---------- bindings ---------- */
+function bindPhotoReelPanel(){
+  var c=preelCfg();
+  var reb=function(){ M.preel=null; stopMotion(); persist(); renderMotionPanel(); buildPreel().then(function(){ drawMotion(0); }); };
+  $$('[data-pfmt]').forEach(function(b){ b.onclick=function(){ c.fmt=b.dataset.pfmt; reb(); }; });
+  $$('[data-pdur]').forEach(function(b){ b.onclick=function(){
+    c.dur=parseFloat(b.dataset.pdur); c.beats=beatsForDur(c.dur); reb(); }; });
+  $$('[data-pbeats]').forEach(function(b){ b.onclick=function(){ c.beats=parseInt(b.dataset.pbeats,10); reb(); }; });
+  $$('[data-pmove]').forEach(function(b){ b.onclick=function(){ c.move=b.dataset.pmove; persist(); renderMotionPanel(); drawMotion(0); }; });
+  $$('[data-pamt]').forEach(function(b){ b.onclick=function(){ c.moveAmt=parseFloat(b.dataset.pamt); persist(); renderMotionPanel(); drawMotion(0); }; });
+  $$('[data-pcross]').forEach(function(b){ b.onclick=function(){ c.cross=parseFloat(b.dataset.pcross); persist(); renderMotionPanel(); drawMotion(0); }; });
+  var pb=$('m-pbuild'); if(pb) pb.onclick=function(){ reb(); };
+}
 function bindMotionPanel(){
+  bindPhotoReelPanel();
   var body=$('m-body'), d=motionCfg(), r=reelCfg();
   var on=function(sel,fn){ $$(sel,body).forEach(function(el){ el.onclick=fn.bind(null,el); }); };
   var lv=function(id,lab,set,fx,suf){
@@ -4384,13 +4544,16 @@ function detectFps(v){
 
 /* ---------- record ---------- */
 async function recordMotion(){
-  var isReel = M.mode==='reel';
+  var isReel = M.mode==='reel', isPhotos = M.mode==='photos';
   if(isReel && !M.video){ toast('Choose a clip first'); return; }
-  if(!isReel && !M.layers){ await buildAnim(); }
+  if(isPhotos && !M.preel){ await buildPreel(); }
+  if(isPhotos && !M.preel){ return; }
+  if(!isReel && !isPhotos && !M.layers){ await buildAnim(); }
   var cv=$('mboard');
   var d=motionCfg();
-  var W = isReel?1080:(FORMATS[d.fmt]||FORMATS.story).w;
-  var H = isReel?1920:(FORMATS[d.fmt]||FORMATS.story).h;
+  var pf = isPhotos ? (FORMATS[preelCfg().fmt]||FORMATS.story) : null;
+  var W = isReel?1080:(isPhotos? pf.w : (FORMATS[d.fmt]||FORMATS.story).w);
+  var H = isReel?1920:(isPhotos? pf.h : (FORMATS[d.fmt]||FORMATS.story).h);
   M.recording=true; cv.width=W; cv.height=H;
   var fps = isReel? M.fps : 30;
   var stream=cv.captureStream(fps);
@@ -4410,15 +4573,29 @@ async function recordMotion(){
     M.recording=false;
     var ext=mime.indexOf('mp4')>=0?'mp4':'webm';
     var h=activeHandle();
-    download(new Blob(chunks,{type:mime}),
-      (h?slug(itemFor(h).product.handle):'clore')+'_'+(isReel?('reel_'+reelCfg().skin):('anim_'+S.template))+'.'+ext);
-    busy(false); toast('Video exported'); drawMotion(0);
+    var kind = isReel ? ('reel_'+reelCfg().skin)
+             : (isPhotos ? ('photoreel_'+preelCfg().dur+'s') : ('anim_'+S.template));
+    var name=(h?slug(itemFor(h).product.handle):'clore')+'_'+kind+'.'+ext;
+    var blob=new Blob(chunks,{type:mime});
+    /* An <a download> does nothing inside an installed iOS web app, so the
+       share sheet is the only way the video reaches the camera roll there. */
+    var file=null;
+    try{ file=new File([blob],name,{type:mime}); }catch(e){}
+    if(!CAN_DOWNLOAD && file && navigator.canShare && navigator.canShare({files:[file]})){
+      navigator.share({files:[file]})
+        .then(function(){ toast('Video saved'); })
+        .catch(function(e){ if(e && e.name!=='AbortError') toast('Could not open the share sheet'); });
+    } else {
+      download(blob,name);
+      toast('Video exported');
+    }
+    busy(false); drawMotion(0);
   };
   busy(true,'Recording','plays through once in real time');
   var t0=performance.now();
   if(isReel){ M.video.currentTime=0; M.video.muted=false; M.video.volume=1; await M.video.play(); }
   rec.start(250);
-  var end = isReel ? M.dur : motionTotal();
+  var end = isReel ? M.dur : (isPhotos ? preelCfg().dur : motionTotal());
   var loop=async function(){
     if(!M.recording) return;
     var t = isReel ? M.video.currentTime : (performance.now()-t0)/1000;
