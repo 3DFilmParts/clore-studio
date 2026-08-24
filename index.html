@@ -2088,10 +2088,11 @@ async function renderTo(canvas, opts){
 
   var handle = opts.handle;
   var item = opts.item || itemFor(handle);
-  /* Resolved per photo so each post in a run carries its own line. */
+  /* Resolved per photo so each post in a run carries its own line.
+     Not named W: that is the canvas width for the rest of this function. */
   if(!opts.item && typeof wordsFor==='function'){
-    var W=wordsFor(handle, opts.hero||0);
-    item = Object.assign({}, item, {headline:W.headline, sub:W.sub});
+    var WORDS=wordsFor(handle, opts.hero||0);
+    item = Object.assign({}, item, {headline:WORDS.headline, sub:WORDS.sub});
   }
   var cfg  = opts.cfg  || cfgFor(handle);
   var tpl  = templateById(opts.template||S.template);
@@ -2812,6 +2813,9 @@ function panelParts(){
   out+=grp('Words on this post', wSel==='all'?null:('Photo '+(wSel+1)),
     wStrip
     +'<div class="lbl">Headline</div><textarea id="t-head" rows="2">'+esc(wW.headline)+'</textarea>'
+    +'<div class="row wrap" style="margin-top:7px">'
+    +'<button class="chip sm" id="t-newhead">New headline</button>'
+    +'<span class="v">'+headPool(h).length+' to draw from</span></div>'
     +'<div class="lbl" style="margin-top:9px">Description line</div><textarea id="t-sub" rows="2" placeholder="Taken from your store copy">'+esc(wW.sub)+'</textarea>'
     +'<div class="row wrap" style="margin-top:7px">'
     +'<button class="chip sm" id="t-newsub">New blurb</button>'
@@ -2983,6 +2987,37 @@ function subLineFor(handle, seed){
   return pool[i];
 }
 
+/* Alternative headlines. Every one is his own product title with something
+   taken away, never a new name invented for it: the bracketed aside dropped,
+   a trailing clause dropped, or the camera name lifted off the front so the
+   part itself leads. The untouched title is always first, so doing nothing
+   changes nothing. */
+function headPool(handle){
+  var it=itemFor(handle), p=it.product, out=[], seen={};
+  function put(x){
+    var v=clean(x).replace(/\s{2,}/g,' ').trim().replace(/^[-|,\s]+|[-|,\s]+$/g,'');
+    if(!v || v.split(/\s+/).length<2 || v.length>70) return;
+    var k=v.toLowerCase(); if(seen[k]) return;
+    seen[k]=1; out.push(v);
+  }
+  var t=clean(p.title||'');
+  put(t);
+  put(t.replace(/\s*[\(\[][^\)\]]*[\)\]]\s*/g,' '));
+  put(t.split(/\s+[-|]\s+/)[0]);
+  systemsIn(p).forEach(function(sys){
+    var re=new RegExp(sys.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'i');
+    var rest=t.replace(re,' ');
+    if(clean(rest).split(/\s+/).length>=3) put(rest);
+  });
+  return out;
+}
+function headLineFor(handle, seed){
+  var pool=headPool(handle);
+  if(!pool.length) return null;
+  var n=pool.length;
+  return pool[((seed||0)%n+n)%n];
+}
+
 /* The words for one post. A product that makes six posts should not read the
    same six times, so with nothing written by hand each photo takes the next
    line off the pool. Anything typed wins: a line written for one photo beats a
@@ -2997,10 +3032,11 @@ function wordsFor(handle, hero){
     var pool=subPool(handle);
     sub = pool.length ? pool[(((ov.subSeed||0)+h)%pool.length+pool.length)%pool.length] : it.sub;
   }
-  return {
-    headline: per.headline!=null ? per.headline : it.headline,
-    sub: sub
-  };
+  var headline;
+  if(per.headline!=null)     headline=per.headline;
+  else if(ov.headline!=null) headline=ov.headline;
+  else headline = headLineFor(handle, ov.headSeed||0) || it.headline;
+  return { headline: headline, sub: sub };
 }
 function photoWordsEdited(handle,i){
   var w=((S.items[handle]||{}).words||{})[i];
@@ -3165,6 +3201,32 @@ function bindPanel(){
   };
   bindCfgText('t-badge','text.badge'); bindCfgText('t-cta','text.cta');
   bindCfgText('t-site','text.site'); bindCfgText('t-handle','text.handle');
+  /* Both shuffles write straight into their own field and leave the rest of
+     the panel alone. Re-rendering it threw the phone back to the top of the
+     tab on every tap, which is what made this unusable one handed. */
+  function afterShuffle(){
+    var w=S.ui.wordPhoto;
+    var got=wordsFor(h, w==='all' ? 0 : w);
+    var hs=$('t-head'), sb=$('t-sub');
+    if(hs) hs.value = w==='all' ? itemFor(h).headline : got.headline;
+    if(sb) sb.value = w==='all' ? itemFor(h).sub      : got.sub;
+    var star=document.querySelector('[data-wphoto="'+w+'"] .sl');
+    if(star && w!=='all') star.textContent=(w+1)+(photoWordsEdited(h,w)?'*':'');
+    schedulePreview(); persist();
+  }
+  var nhd=$('t-newhead');
+  if(nhd) nhd.onclick=function(){
+    var ov=S.items[h]||(S.items[h]={}), pool=headPool(h);
+    if(pool.length<2){ toast('This title has no other way to read'); return; }
+    if(S.ui.wordPhoto==='all'){ ov.headSeed=(ov.headSeed||0)+1; ov.headline=null; }
+    else {
+      var i=S.ui.wordPhoto;
+      ov.words=ov.words||{}; ov.words[i]=ov.words[i]||{};
+      ov.words[i]._hseed=(ov.words[i]._hseed||0)+1;
+      ov.words[i].headline=headLineFor(h,ov.words[i]._hseed);
+    }
+    afterShuffle();
+  };
   var nsb=$('t-newsub');
   if(nsb) nsb.onclick=function(){
     var ov=S.items[h]||(S.items[h]={}), pool=subPool(h);
@@ -3179,7 +3241,7 @@ function bindPanel(){
       ov.words[i]._seed=(ov.words[i]._seed||i)+1;
       ov.words[i].sub=subLineFor(h,ov.words[i]._seed);
     }
-    renderRefine(); schedulePreview(); persist();
+    afterShuffle();
   };
   $$('[data-wphoto]').forEach(function(b){
     b.onclick=function(){
