@@ -2365,7 +2365,15 @@ function outputFormats(){
   var out=Object.keys(f);
   return out.length?out:['portrait'];
 }
-function stillFormats(){ return outputFormats().filter(function(f){ return f!=='reel'; }); }
+function allStillFormats(){ return Object.keys(FORMATS).filter(function(f){ return f!=='reel'; }); }
+/* The sizes are proposed by what you said you were making in step one, but the
+   Export screen can override them. Deciding you also want a square is an export
+   decision and should not mean walking all the way back to the start. */
+function stillFormats(){
+  var pick = (typeof S!=='undefined' && S.export && S.export.fmts) ? S.export.fmts : null;
+  if(pick && pick.length) return pick.filter(function(f){ return FORMATS[f] && f!=='reel'; });
+  return outputFormats().filter(function(f){ return f!=='reel'; });
+}
 /* How many of a product's photos each become their own post. One per selected
    photo while per photo is on, otherwise a single post led by the first. */
 function heroCountFor(h){
@@ -2450,6 +2458,9 @@ function renderIntents(){
       var id=b.dataset.intent, i=S.intents.indexOf(id);
       if(i>=0){ if(S.intents.length>1) S.intents.splice(i,1); }
       else S.intents.push(id);
+      /* Answering this differently should propose fresh sizes, so any override
+         made on the Export screen is dropped rather than silently winning. */
+      if(S.export) S.export.fmts=null;
       renderIntents(); updateFoot(); persist();
     };
   });
@@ -3265,9 +3276,16 @@ function renderExport(){
   var html='';
   html+='<div class="h1">Export</div>';
   var allPosts=postList(), selPosts=selectedPosts();
+  /* postList() hands back new objects each call, so the running order has to be
+     looked up by id. Comparing objects here is what made every badge read 0. */
+  var selPos={}; selPosts.forEach(function(p,i){ selPos[p.id]=i+1; });
   html+='<div class="sub" id="ex-sub">'+exSubHTML()+'</div>';
-  html+=grp('Sizes going out',null,'<div class="chips">'+fmts.map(function(f){
-    return '<span class="chip sm on">'+FORMATS[f].name+' <span class="ct">'+FORMATS[f].tag+'</span></span>'; }).join('')+'</div>');
+  html+=grp('Sizes going out',null,'<div class="chips">'+allStillFormats().map(function(f){
+    var on=fmts.indexOf(f)>=0;
+    return '<button class="chip sm'+(on?' on':'')+'" data-exfmt="'+esc(f)+'">'
+      +esc(FORMATS[f].name)+' <span class="ct">'+esc(FORMATS[f].tag)+'</span></button>';
+  }).join('')+'</div>'
+  +'<div class="hint">Tap a size to add it or drop it. Every product is made at every size left on, so two sizes is twice the files.</div>');
   html+=grp('File type',null, chipsHTML([['png','PNG'],['jpeg','JPEG']],o.type,'data-extype')
     + '<div class="sw'+(o.hq?' on':'')+'" data-exsw="hq" style="margin-top:8px"><span class="n">Double resolution</span><span class="t"></span></div>'
     + '<div class="sw'+(o.captions?' on':'')+'" data-exsw="captions"><span class="n">Include the captions</span><span class="t"></span></div>');
@@ -3284,7 +3302,7 @@ function renderExport(){
     +'<span class="v" id="ex-selcount">'+selPosts.length+' of '+allPosts.length+'</span>'
     +'</div>'
     +'<div class="pgrid" id="exgrid">'+allPosts.map(function(p,i){
-        var on=postOn(p), pos=on?(selPosts.indexOf(p)+1):0;
+        var on=postOn(p), pos=on?(selPos[p.id]||0):0;
         return '<button class="pcard'+(on?' on':'')+'" data-post="'+esc(p.id)+'">'
           +'<span class="ph" style="aspect-ratio:'+FORMATS[p.fmt].w+'/'+FORMATS[p.fmt].h+'">'
           +'<canvas id="exv-'+i+'"></canvas>'
@@ -3311,6 +3329,20 @@ function renderExport(){
     +'<div class="hint">Animate takes the design you just made, splits it into its real layers and moves them one at a time. Reel puts your own footage inside the frame art.</div>');
   $('exportbody').innerHTML=html;
 
+  $$('[data-exfmt]').forEach(function(b){
+    b.onclick=function(){
+      var f=b.dataset.exfmt, cur=stillFormats().slice(), i=cur.indexOf(f);
+      if(i>=0){
+        if(cur.length<2){ toast('Keep at least one size'); return; }
+        cur.splice(i,1);
+      } else cur.push(f);
+      /* Held in a fixed order so the run does not reshuffle depending on which
+         chip you happened to tap first. */
+      var order=allStillFormats();
+      cur.sort(function(a,b2){ return order.indexOf(a)-order.indexOf(b2); });
+      S.export.fmts=cur; persist(); renderExport();
+    };
+  });
   $$('[data-extype]').forEach(function(b){ b.onclick=function(){ S.export.type=b.dataset.extype; renderExport(); }; });
   $$('[data-exsw]').forEach(function(b){ b.onclick=function(){ S.export[b.dataset.exsw]=!S.export[b.dataset.exsw]; renderExport(); }; });
   /* Ticking is a label change, not a rebuild. Re-rendering the screen here
